@@ -159,60 +159,6 @@ bool CopyDirectory(string SourcePath, string TargetPath, bool CopySubdirectories
 	//}
  //   FindClose(hFind);
 
-int StringToInt(string Number)
-{
-	//Wandelt einen String in einen Integer um
-	int				Output = 0;
-	unsigned int	Factor = 1;
-
-	for(int i = Number.length() - 1; i >= 0; i--)
-	{
-		if(i == 0 && Number[0] == '-')
-		{
-			Output *= -1;
-			continue;
-		}
-
-		switch(Number[i])
-		{
-		case '0':
-			break;
-		case '1':
-			Output += (1 * Factor);
-			break;
-		case '2':
-			Output += (2 * Factor);
-			break;
-		case '3':
-			Output += (3 * Factor);
-			break;
-		case '4':
-			Output += (4 * Factor);
-			break;
-		case '5':
-			Output += (5 * Factor);
-			break;
-		case '6':
-			Output += (6 * Factor);
-			break;
-		case '7':
-			Output += (7 * Factor);
-			break;
-		case '8':
-			Output += (8 * Factor);
-			break;
-		case '9':
-			Output += (9 * Factor);
-			break;
-		default:
-			return(Output);
-		}
-		Factor *= 10;
-	}
-
-	return(Output);
-}
-
 int CountWords(string Text, bool RespectInterpunctation)
 {
 	//Gibt die Anzahl an Wörtern in einem String zurück
@@ -286,35 +232,6 @@ string GetWord(string Text, int Index)
 	}
 
 	return(Word);
-}
-
-string IntToString(int Number)
-{
-	//Konvertiert einen Integer in einen String
-	string Temp				= "";
-	string ReturnString		= "";
-
-	//Sofortige Rückgabe, wenn 0 als Zahl übergeben wird
-	if(Number == 0)
-	{
-		return("0");
-	}
-
-	//Solange die übergebene Zahl größer als 0 ist, wird die letzte Ziffer mit Number % 10 errechnet
-	//Deren ASCII-Wert wird gespeichert und durch Number /= 10 weggekürzt
-	while(Number > 0)
-	{
-		Temp += (Number % 10 + 48);
-		Number /= 10;
-	}
-
-	//Entstandener String muss umgedreht werden
-	for(int i = Temp.length() - 1; i >= 0; i--)
-	{
-		ReturnString += Temp[i];
-	}
-
-	return(ReturnString);
 }
 
 
