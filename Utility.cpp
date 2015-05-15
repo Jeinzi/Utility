@@ -8,15 +8,15 @@ void Color(int ColorCode)
 	return;
 }
 
-void Error(string Error)
+void Error(std::string Error)
 {
 	//Gibt eine standardmäßig formatierte Fehlermeldung aus
 	Color(ERROR_COLOR);
-	cout << "<!> ";
+	std::cout << "<!> ";
 	Color(OUTPUT_COLOR);
-	cout << Error;
+	std::cout << Error;
 	Color(ERROR_COLOR);
-	cout << " <!>" << endl;
+	std::cout << " <!>" << std::endl;
 	Color(OUTPUT_COLOR);
 }
 
@@ -35,24 +35,24 @@ void Wait()
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
 
-void PrepareConsole(string ProgramName, string Version, string Description)
+void PrepareConsole(std::string ProgramName, std::string Version, std::string Description)
 {
 	//Bereitet den Bildschirm standardisiert vor
-	string	Title = ProgramName + " " + Version;
+	std::string	Title = ProgramName + " " + Version;
 
 	system("cls");
 	Color(INPUT_COLOR);
 	SetConsoleTitle(Title.c_str());
 
-	cout << "****************************** " << ProgramName << " ******************************" << endl << endl;
+	std::cout << "****************************** " << ProgramName << " ******************************" << std::endl << std::endl;
 	if(Description != "")
 	{
-		cout << Description << endl << endl;
+		std::cout << Description << std::endl << std::endl;
 	}
 	return;
 }
 
-void PrintText(string Text, int Pause)
+void PrintText(std::string Text, int Pause)
 {
 	//Gibt einen Text schrittweise aus (Ein Buchstabe nach dem anderen)
 	//Wird dabei die Taste 'q' gedrückt, wird der Text direkt ausgegeben
@@ -65,14 +65,14 @@ void PrintText(string Text, int Pause)
 
 	for(unsigned int i = 0; i < Text.length(); i++)
 	{
-		cout << Text[i];
+		std::cout << Text[i];
 		if(_kbhit())
 		{
 			if(_getch() == 'q' || _getch() == 'Q')
 			{
 				for(i += 1; i < Text.length(); i++)
 				{
-					cout << Text[i];
+					std::cout << Text[i];
 				}
 				break;
 			}
@@ -80,46 +80,46 @@ void PrintText(string Text, int Pause)
 		Sleep(Pause);
 	}
 
-	cout << endl;
+	std::cout << std::endl;
 	return;
 }
 
-bool CopyDirectory(string SourcePath, string TargetPath, bool CopySubdirectories)
+bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories)
 {
 	//Kopiert einen Ordner an einen anderen Ort, standardmäßig mit Unterordnern
 	int				ErrorCode = 0;
-	string			TargetFilePath = "";
-	string			SourceFilePath = "";
-	string			SearchPath = SourcePath + "/*";
+	std::string		TargetFilePath = "";
+	std::string		SourceFilePath = "";
+	std::string		SearchPath = SourcePath + "/*";
 	HANDLE			HFind;
 	WIN32_FIND_DATA	FindFileData;
 
-	cout << "Trying to copy files from '" << SourcePath << "' in '" << TargetPath << "'." << endl;
+	std::cout << "Trying to copy files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
 
 	//Erstellt, wenn nötig, das Verzeichnis
 	if(!PathFileExists(TargetPath.c_str()))
 	{
-		cout << "Directory '" << TargetPath << "' does not exist." << endl;
+		std::cout << "Directory '" << TargetPath << "' does not exist." << std::endl;
 		ErrorCode = CreateDirectory(TargetPath.c_str(), 0);
-		cout << "Created directory." << endl;
+		std::cout << "Created directory." << std::endl;
 		if(ErrorCode == 0)
 		{
-			cout << "Error." << endl;
+			std::cout << "Error." << std::endl;
 			return(false);
 		}
 	}
 
-	cout << "Copying files from '" << SourcePath << "' in '" << TargetPath << "'." << endl;
+	std::cout << "Copying files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
 
 	//Dateien werden gesucht und kopiert
 	HFind = FindFirstFile(SearchPath.c_str(), &FindFileData);
 	FindNextFile(HFind, &FindFileData);
 	while(FindNextFile(HFind, &FindFileData))
 	{
-		cout << "Finding next File." << endl;
+		std::cout << "Finding next File." << std::endl;
 		TargetFilePath = TargetPath + "\\" + FindFileData.cFileName;
 		SourceFilePath = SourcePath + "\\" + FindFileData.cFileName;
-		cout << "Copying files from '" << SourceFilePath << "' to '" << TargetFilePath << "'." << endl;
+		std::cout << "Copying files from '" << SourceFilePath << "' to '" << TargetFilePath << "'." << std::endl;
 
 		//Ordner werden, wenn gefordert, kopiert
 		if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
@@ -127,18 +127,18 @@ bool CopyDirectory(string SourcePath, string TargetPath, bool CopySubdirectories
 
 			if(CopySubdirectories)
 			{
-				cout << "Copying directory." << endl;
+				std::cout << "Copying directory." << std::endl;
 				CopyDirectory(SourceFilePath, TargetFilePath, true);
 			}
 		}
 		else
 		{
-			cout << "Copying file." << endl;
+			std::cout << "Copying file." << std::endl;
 			CopyFile(SourceFilePath.c_str(), TargetFilePath.c_str(), false);
 		}
 	}
     FindClose(HFind);
-	cout << "Returning." << endl;
+	std::cout << "Returning." << std::endl;
 	return(true);
 }
 
@@ -159,7 +159,7 @@ bool CopyDirectory(string SourcePath, string TargetPath, bool CopySubdirectories
 	//}
  //   FindClose(hFind);
 
-int CountWords(string Text, bool RespectInterpunctation)
+int CountWords(std::string Text, bool RespectInterpunctation)
 {
 	//Gibt die Anzahl an Wörtern in einem String zurück
 	bool	Word = false;
@@ -184,13 +184,14 @@ int CountWords(string Text, bool RespectInterpunctation)
 	return(WordCount);
 }
 
-string ToLower(string Text) {
+std::string ToLower(std::string Text)
+{
 	//Gibt einen String konvertiert in Kleinbuchstaben aus
 	transform(Text.begin(), Text.end(), Text.begin(), ::tolower);
 	return(Text);
 }
 
-string FirstToUpper(string Text)
+std::string FirstToUpper(std::string Text)
 {
 	//Wandelt den ersten Buchstaben eines Strings in einen Großbuchstaben um
 	if(Text == "")
@@ -202,11 +203,11 @@ string FirstToUpper(string Text)
 	return(Text);
 }
 
-string GetWord(string Text, int Index)
+std::string GetWord(std::string Text, int Index)
 {
 	//Gibt das Wort an der mit Index angegebenen Stelle zurück
 	unsigned int WordCount = 0;
-	string Word = "";
+	std::string Word = "";
 
 	//Indexkorrektur
 	if(Index < 0)
@@ -235,10 +236,10 @@ string GetWord(string Text, int Index)
 }
 
 
-string ReverseString(string Text)
+std::string ReverseString(std::string Text)
 {
 	//Dreht einen String um und gibt diesen zurück
-	string Output = "";
+	std::string Output = "";
 
 	for(int i = Text.length() - 1; i >= 0; i--)
 	{
@@ -249,11 +250,11 @@ string ReverseString(string Text)
 }
 
 
-string IntToHex(int Number)
+std::string IntToHex(int Number)
 {
 	//Wandelt eine Ganzzahl in Hexadezimale Schreibweise um und gibt diese als String zurück
-	int		Temp = 0;
-	string	Output = "";
+	int			Temp = 0;
+	std::string	Output = "";
 
 	if(Number < 1)
 	{
@@ -266,7 +267,7 @@ string IntToHex(int Number)
 
 		if(Temp <= 9)
 		{
-			Output += IntToString(Temp);
+			Output += std::to_string(Temp);
 		}
 		else
 		{
@@ -291,7 +292,7 @@ string IntToHex(int Number)
 				Output += 'F';
 				break;
 			default:
-				cout << "Fehler in IntToHex: Integer ist keine Hexadezimale Ziffer." << endl;
+				std::cout << "Fehler in IntToHex: Integer ist keine Hexadezimale Ziffer." << std::endl;
 			}
 		}
 
@@ -302,10 +303,10 @@ string IntToHex(int Number)
 	return(Output);
 }
 
-string Escape(string Text)
+std::string Escape(std::string Text)
 {
 	//Escaped einen String, um ihn in einer URL verwenden zu können - Sonderzeichen werden in %HexZahl konvertiert
-	string Output = "";
+	std::string Output = "";
 
 	for(unsigned int i = 0; i < Text.length(); i++)
 	{
@@ -324,7 +325,7 @@ string Escape(string Text)
 	return(Output);
 }
 
-string GetUserName()
+std::string GetUserName()
 {
 	//Gibt den Benutzernamen zurück
 	DWORD	Size;
@@ -336,7 +337,7 @@ string GetUserName()
 	return UserName;
 }
 
-string GetComputerName()
+std::string GetComputerName()
 {
 	//Gibt den Computernamen zurück
 	DWORD	Size;
@@ -348,11 +349,11 @@ string GetComputerName()
 	return ComputerName;
 }
 
-string GetFileFormat(string FileName)
+std::string GetFileFormat(std::string FileName)
 {
 	//Gibt das Format eines übergebenen Dateinamens zurück
 	bool	FoundDot = false;
-	string	Format = "";
+	std::string	Format = "";
 
 	for (int i = FileName.length() - 1; i >= 0; i--)
 	{
@@ -374,10 +375,10 @@ string GetFileFormat(string FileName)
 }
 
 // Extrahiert den Dateinamen aus einem Pfad und gibt diesen zurück.
-string	GetFileName(string path)
+std::string GetFileName(std::string path)
 {
-	bool	foundSlash = false;
-	string	name = "";
+	bool		foundSlash = false;
+	std::string	name = "";
 
 	for (int i = path.length() - 1; i >= 0; i--)
 	{
