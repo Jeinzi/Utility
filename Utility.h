@@ -1,5 +1,5 @@
-#ifndef GENERAL_H
-#define GENERAL_H
+#ifndef UTILITY_H
+#define UTILITY_H
 
 #include <iostream>
 #include <Windows.h>
