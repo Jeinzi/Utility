@@ -1,13 +1,14 @@
 #include "Utility.h"
 
+// Changes the color in which the console text is beeing displayed.
 void Color(int ColorCode)
 {
-	//Ändert die Farbe, in der Text in der Konsole dargestellt wird
 	HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(Handle, ColorCode);
 	return;
 }
 
+// Prints a standardized error message.
 void Error(std::string Error)
 {
 	//Gibt eine standardmäßig formatierte Fehlermeldung aus
@@ -20,9 +21,9 @@ void Error(std::string Error)
 	Color(OUTPUT_COLOR);
 }
 
+// Waits until an arbitrary key is pressed.
 void Wait()
 {
-	//Wartet, bis eine beliebige Taste gedrückt wird
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	while(true)
 	{
@@ -35,9 +36,9 @@ void Wait()
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
 
+// Clears the terminal and prints a standardized header.
 void PrepareConsole(std::string ProgramName, std::string Version, std::string Description)
 {
-	//Bereitet den Bildschirm standardisiert vor
 	std::string	Title = ProgramName + " " + Version;
 
 	system("cls");
@@ -52,12 +53,10 @@ void PrepareConsole(std::string ProgramName, std::string Version, std::string De
 	return;
 }
 
-void PrintText(std::string Text, int Pause)
+// Prints a string letter by letter with an arbitrary delay.
+// Pressing 'q' will print the rest of the string instantly.
+void PrintText(std::string Text, unsigned int Pause)
 {
-	//Gibt einen Text schrittweise aus (Ein Buchstabe nach dem anderen)
-	//Wird dabei die Taste 'q' gedrückt, wird der Text direkt ausgegeben
-
-	//Pausenzeit wird korrigiert
 	if(Pause < 0)
 	{
 		Pause = 0;
@@ -84,6 +83,7 @@ void PrintText(std::string Text, int Pause)
 	return;
 }
 
+// Copies a directory to a new location.
 bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories)
 {
 	//Kopiert einen Ordner an einen anderen Ort, standardmäßig mit Unterordnern
@@ -111,7 +111,7 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 
 	std::cout << "Copying files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
 
-	//Dateien werden gesucht und kopiert
+	// Finding and copiing files.
 	HFind = FindFirstFile(SearchPath.c_str(), &FindFileData);
 	FindNextFile(HFind, &FindFileData);
 	while(FindNextFile(HFind, &FindFileData))
@@ -121,7 +121,7 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 		SourceFilePath = SourcePath + "\\" + FindFileData.cFileName;
 		std::cout << "Copying files from '" << SourceFilePath << "' to '" << TargetFilePath << "'." << std::endl;
 
-		//Ordner werden, wenn gefordert, kopiert
+		// Copy directories and files.
 		if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
 		{
 
@@ -159,9 +159,9 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 	//}
  //   FindClose(hFind);
 
+// Returns the number of words in a string.
 int CountWords(std::string Text, bool RespectInterpunctation)
 {
-	//Gibt die Anzahl an Wörtern in einem String zurück
 	bool	Word = false;
 	int		WordCount = 0;
 
@@ -184,13 +184,14 @@ int CountWords(std::string Text, bool RespectInterpunctation)
 	return(WordCount);
 }
 
+// Converts a string to lower case.
 std::string ToLower(std::string Text)
 {
-	//Gibt einen String konvertiert in Kleinbuchstaben aus
 	transform(Text.begin(), Text.end(), Text.begin(), ::tolower);
 	return(Text);
 }
 
+// Capitalizes the first letter in a string.
 std::string FirstToUpper(std::string Text)
 {
 	//Wandelt den ersten Buchstaben eines Strings in einen Großbuchstaben um
@@ -203,9 +204,9 @@ std::string FirstToUpper(std::string Text)
 	return(Text);
 }
 
+// Returns the word at the specified index.
 std::string GetWord(std::string Text, int Index)
 {
-	//Gibt das Wort an der mit Index angegebenen Stelle zurück
 	unsigned int WordCount = 0;
 	std::string Word = "";
 
@@ -235,10 +236,9 @@ std::string GetWord(std::string Text, int Index)
 	return(Word);
 }
 
-
+// Reverses a string!
 std::string ReverseString(std::string Text)
 {
-	//Dreht einen String um und gibt diesen zurück
 	std::string Output = "";
 
 	for(int i = Text.length() - 1; i >= 0; i--)
@@ -249,10 +249,9 @@ std::string ReverseString(std::string Text)
 	return(Output);
 }
 
-
+// Converts an integer to a hex formatted string.
 std::string IntToHex(int Number)
 {
-	//Wandelt eine Ganzzahl in Hexadezimale Schreibweise um und gibt diese als String zurück
 	int			Temp = 0;
 	std::string	Output = "";
 
@@ -260,7 +259,7 @@ std::string IntToHex(int Number)
 	{
 		return("0");
 	}
-	
+
 	while(Number > 0)
 	{
 		Temp = Number % 16;
@@ -303,9 +302,9 @@ std::string IntToHex(int Number)
 	return(Output);
 }
 
+// Escapes a string for use in an URL (special characters are converted in a hex code).
 std::string Escape(std::string Text)
 {
-	//Escaped einen String, um ihn in einer URL verwenden zu können - Sonderzeichen werden in %HexZahl konvertiert
 	std::string Output = "";
 
 	for(unsigned int i = 0; i < Text.length(); i++)
@@ -325,9 +324,9 @@ std::string Escape(std::string Text)
 	return(Output);
 }
 
+// Returns the username.
 std::string GetUserName()
 {
-	//Gibt den Benutzernamen zurück
 	DWORD	Size;
 	char	UserName[255];
 
@@ -337,9 +336,9 @@ std::string GetUserName()
 	return UserName;
 }
 
+// Returns the computer's name.
 std::string GetComputerName()
 {
-	//Gibt den Computernamen zurück
 	DWORD	Size;
 	char	ComputerName[255];
 
@@ -349,18 +348,18 @@ std::string GetComputerName()
 	return ComputerName;
 }
 
+// Returns the format of a specified file name.
 std::string GetFileFormat(std::string FileName)
 {
-	//Gibt das Format eines übergebenen Dateinamens zurück
 	bool	FoundDot = false;
 	std::string	Format = "";
 
+	// Searches the string from last to first character.
 	for (int i = FileName.length() - 1; i >= 0; i--)
 	{
-		//Wurde ein Punkt gefunden, wird der Dateiname von diesem Char bis zum Ende kopiert
+		// If a dot has been found, all characters to the end of the string are copied.
 		if (FileName[i] == '.')
 		{
-			//Format wird herausgefiltert
 			FoundDot = true;
 			i++;
 			for (unsigned int j = i; j < FileName.length(); j++)
@@ -374,18 +373,18 @@ std::string GetFileFormat(std::string FileName)
 	return(Format);
 }
 
-// Extrahiert den Dateinamen aus einem Pfad und gibt diesen zurück.
+// Returns the filename from a path.
 std::string GetFileName(std::string path)
 {
 	bool		foundSlash = false;
 	std::string	name = "";
 
+	// Searching through string backwards.
 	for (int i = path.length() - 1; i >= 0; i--)
 	{
-		// Wurde ein Slash gefunden, wird der Dateiname von diesem Char bis zum Ende kopiert.
+		// If some kind of slash has been found, the rest of the string will be copied.
 		if (path[i] == '/' || path[i] == '\\')
 		{
-			// Dateiname wird herausgefiltert.
 			foundSlash = true;
 			name = path.substr(i + 1);
 			break;
