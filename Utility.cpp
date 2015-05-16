@@ -1,32 +1,48 @@
 #include "Utility.h"
 
 // Changes the color in which the console text is beeing displayed.
-void Color(int ColorCode)
+void ChangeColor(Color color)
 {
+#ifdef _WIN32
 	HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(Handle, ColorCode);
-	return;
+	SetConsoleTextAttribute(Handle, (int)color);
+#else
+	char colorCode = (char)color;
+	bool bright = false;
+	std::string escapeCode("\x1B[");
+
+	if (colorCode > 7)
+	{
+		colorCode -= 8;
+		bright = true;
+	}
+	escapeCode += std::to_string(30 + colorCode);
+	if (bright) escapeCode += ";1";
+	escapeCode += "m";
+
+	std::cout << escapeCode;
+#endif
 }
 
 // Prints a standardized error message.
-void Error(std::string Error)
+void PrintError(std::string error)
 {
-	Color(ERROR_COLOR);
+	ChangeColor(Color::Error);
 	std::cout << "<!> ";
-	Color(OUTPUT_COLOR);
-	std::cout << Error;
-	Color(ERROR_COLOR);
+	ChangeColor(Color::Output);
+	std::cout << error;
+	ChangeColor(Color::Error);
 	std::cout << " <!>" << std::endl;
-	Color(OUTPUT_COLOR);
+	ChangeColor(Color::Output);
 }
 
 // Waits until an arbitrary key is pressed.
 void Wait()
 {
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-	while(true)
+	while (true)
 	{
-		if(_kbhit())
+		if (_kbhit())
 		{
 			break;
 		}
@@ -41,11 +57,11 @@ void PrepareConsole(std::string ProgramName, std::string Version, std::string De
 	std::string	Title = ProgramName + " " + Version;
 
 	system("cls");
-	Color(INPUT_COLOR);
+	ChangeColor(Color::Input);
 	SetConsoleTitle(Title.c_str());
 
 	std::cout << "****************************** " << ProgramName << " ******************************" << std::endl << std::endl;
-	if(Description != "")
+	if (Description != "")
 	{
 		std::cout << Description << std::endl << std::endl;
 	}
@@ -56,19 +72,19 @@ void PrepareConsole(std::string ProgramName, std::string Version, std::string De
 // Pressing 'q' will print the rest of the string instantly.
 void PrintText(std::string Text, unsigned int Pause)
 {
-	if(Pause < 0)
+	if (Pause < 0)
 	{
 		Pause = 0;
 	}
 
-	for(unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < Text.length(); i++)
 	{
 		std::cout << Text[i];
-		if(_kbhit())
+		if (_kbhit())
 		{
-			if(_getch() == 'q' || _getch() == 'Q')
+			if (_getch() == 'q' || _getch() == 'Q')
 			{
-				for(i += 1; i < Text.length(); i++)
+				for (i += 1; i < Text.length(); i++)
 				{
 					std::cout << Text[i];
 				}
@@ -95,12 +111,12 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 	std::cout << "Trying to copy files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
 
 	// Creating directory.
-	if(!PathFileExists(TargetPath.c_str()))
+	if (!PathFileExists(TargetPath.c_str()))
 	{
 		std::cout << "Directory '" << TargetPath << "' does not exist." << std::endl;
 		ErrorCode = CreateDirectory(TargetPath.c_str(), 0);
 		std::cout << "Created directory." << std::endl;
-		if(ErrorCode == 0)
+		if (ErrorCode == 0)
 		{
 			std::cout << "Error." << std::endl;
 			return(false);
@@ -112,7 +128,7 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 	// Finding and copiing files.
 	HFind = FindFirstFile(SearchPath.c_str(), &FindFileData);
 	FindNextFile(HFind, &FindFileData);
-	while(FindNextFile(HFind, &FindFileData))
+	while (FindNextFile(HFind, &FindFileData))
 	{
 		std::cout << "Finding next File." << std::endl;
 		TargetFilePath = TargetPath + "\\" + FindFileData.cFileName;
@@ -120,10 +136,10 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 		std::cout << "Copying files from '" << SourceFilePath << "' to '" << TargetFilePath << "'." << std::endl;
 
 		// Copy directories and files.
-		if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+		if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
 		{
 
-			if(CopySubdirectories)
+			if (CopySubdirectories)
 			{
 				std::cout << "Copying directory." << std::endl;
 				CopyDirectory(SourceFilePath, TargetFilePath, true);
@@ -135,27 +151,27 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 			CopyFile(SourceFilePath.c_str(), TargetFilePath.c_str(), false);
 		}
 	}
-    FindClose(HFind);
+	FindClose(HFind);
 	std::cout << "Returning." << std::endl;
 	return(true);
 }
 
 //Copies the Files of one directory to another, without Subfolders
-	//WIN32_FIND_DATA	FindFileData;
-	//HANDLE			hFind;
-	//string			SearchPath = SourcePath + "\\*";
+//WIN32_FIND_DATA	FindFileData;
+//HANDLE			hFind;
+//string			SearchPath = SourcePath + "\\*";
 
-	//CreateDirectory(TargetPath.c_str(), 0);
-	//hFind=FindFirstFile(SearchPath.c_str(), &FindFileData);
-	//FindNextFile(hFind, &FindFileData);
-	//string NewFilePath;
-	//string FilePath;
-	//while(FindNextFile(hFind, &FindFileData)) {
-	//NewFilePath = newpath + "\\" + FindFileData.cFileName;
-	//FilePath = path + "\\" + FindFileData.cFileName;
-	//CopyFile(FilePath.c_str(), NewFilePath.c_str(), false);
-	//}
- //   FindClose(hFind);
+//CreateDirectory(TargetPath.c_str(), 0);
+//hFind=FindFirstFile(SearchPath.c_str(), &FindFileData);
+//FindNextFile(hFind, &FindFileData);
+//string NewFilePath;
+//string FilePath;
+//while(FindNextFile(hFind, &FindFileData)) {
+//NewFilePath = newpath + "\\" + FindFileData.cFileName;
+//FilePath = path + "\\" + FindFileData.cFileName;
+//CopyFile(FilePath.c_str(), NewFilePath.c_str(), false);
+//}
+//   FindClose(hFind);
 
 // Returns the number of words in a string.
 int CountWords(std::string Text, bool RespectInterpunctation)
@@ -165,7 +181,7 @@ int CountWords(std::string Text, bool RespectInterpunctation)
 
 	for (unsigned int i = 0; i < Text.length(); i++)
 	{
-		if ( Text[i] != ' ' && ((Text[i] != ',' && Text[i] != '.' && Text[i] != '?' && Text[i] != '!') || !RespectInterpunctation ) )
+		if (Text[i] != ' ' && ((Text[i] != ',' && Text[i] != '.' && Text[i] != '?' && Text[i] != '!') || !RespectInterpunctation))
 		{
 			if (Word == false)
 			{
@@ -189,26 +205,26 @@ std::string GetAppDataDirectory()
 {
 	std::string path;
 
-	#ifdef _WIN32
-		// Memory for roamingPath is allocated by SHGetKnownFolderPath()!
-		wchar_t* roamingPath = nullptr;
-		if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, NULL, NULL, &roamingPath)))
-		{
-			std::wstringstream ss;
-			ss << roamingPath << L"\\Jeinzi";
-			std::wstring wide = ss.str();
-			path = std::string(wide.begin(), wide.end());
+#ifdef _WIN32
+	// Memory for roamingPath is allocated by SHGetKnownFolderPath()!
+	wchar_t* roamingPath = nullptr;
+	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, NULL, NULL, &roamingPath)))
+	{
+		std::wstringstream ss;
+		ss << roamingPath << L"\\Jeinzi";
+		std::wstring wide = ss.str();
+		path = std::string(wide.begin(), wide.end());
 
-			// Free memory.
-			CoTaskMemFree(static_cast<void*>(roamingPath));
-		}
-		else
-		{
-			path = "";
-		}
-	#else
-		path = std::string(getenv("HOME")) + "/.Jeinzi";
-	#endif
+		// Free memory.
+		CoTaskMemFree(static_cast<void*>(roamingPath));
+	}
+	else
+	{
+		path = "";
+	}
+#else
+	path = std::string(getenv("HOME")) + "/.Jeinzi";
+#endif
 
 	return(path);
 }
@@ -224,7 +240,7 @@ std::string ToLower(std::string Text)
 std::string FirstToUpper(std::string Text)
 {
 	//Wandelt den ersten Buchstaben eines Strings in einen Groﬂbuchstaben um
-	if(Text == "")
+	if (Text == "")
 	{
 		return("");
 	}
@@ -240,7 +256,7 @@ std::string GetWord(std::string Text, int Index)
 	std::string Word = "";
 
 	//Indexkorrektur
-	if(Index < 0)
+	if (Index < 0)
 	{
 		Index = 0;
 	}
@@ -249,14 +265,14 @@ std::string GetWord(std::string Text, int Index)
 		WordCount = 1;
 	}
 
-	for(unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < Text.length(); i++)
 	{
-		if(Text[i] == ' ')
+		if (Text[i] == ' ')
 		{
 			WordCount++;
 			continue;
 		}
-		if(WordCount == Index)
+		if (WordCount == Index)
 		{
 			Word += Text[i];
 		}
@@ -270,7 +286,7 @@ std::string ReverseString(std::string Text)
 {
 	std::string Output = "";
 
-	for(int i = Text.length() - 1; i >= 0; i--)
+	for (int i = Text.length() - 1; i >= 0; i--)
 	{
 		Output += Text[i];
 	}
@@ -284,22 +300,22 @@ std::string IntToHex(int Number)
 	int			Temp = 0;
 	std::string	Output = "";
 
-	if(Number < 1)
+	if (Number < 1)
 	{
 		return("0");
 	}
 
-	while(Number > 0)
+	while (Number > 0)
 	{
 		Temp = Number % 16;
 
-		if(Temp <= 9)
+		if (Temp <= 9)
 		{
 			Output += std::to_string(Temp);
 		}
 		else
 		{
-			switch(Temp)
+			switch (Temp)
 			{
 			case 10:
 				Output += 'A';
@@ -336,9 +352,9 @@ std::string Escape(std::string Text)
 {
 	std::string Output = "";
 
-	for(unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < Text.length(); i++)
 	{
-		if( (Text[i] >= 48 && Text[i] <= 57) || (Text[i] >= 65 && Text[i] <= 90) || (Text[i] >= 97 && Text[i] <= 122) || Text[i] == '@' || Text[i] == '*' || Text[i] == '-' || Text[i] == '_' || Text[i] == '+' || Text[i] == '.' || Text[i] == '/')
+		if ((Text[i] >= 48 && Text[i] <= 57) || (Text[i] >= 65 && Text[i] <= 90) || (Text[i] >= 97 && Text[i] <= 122) || Text[i] == '@' || Text[i] == '*' || Text[i] == '-' || Text[i] == '_' || Text[i] == '+' || Text[i] == '.' || Text[i] == '/')
 		{
 			Output += Text[i];
 		}
@@ -362,18 +378,18 @@ std::string GetComputerName()
 	std::string name;
 
 	// Get computer name (OS specific).
-	#ifdef _WIN32
-		unsigned long nameLength = bufferSize;
-		if (GetComputerName(nameBuffer, &nameLength) != 0)
-		{
-			name = nameBuffer;
-		}
-	#else
-		if (gethostname(nameBuffer, bufferSize) == 0)
-		{
-			name = nameBuffer;
-		}
-	#endif
+#ifdef _WIN32
+	unsigned long nameLength = bufferSize;
+	if (GetComputerName(nameBuffer, &nameLength) != 0)
+	{
+		name = nameBuffer;
+	}
+#else
+	if (gethostname(nameBuffer, bufferSize) == 0)
+	{
+		name = nameBuffer;
+	}
+#endif
 
 	return(name);
 }
@@ -384,18 +400,18 @@ std::string GetUserName()
 	std::string name;
 
 	// Get user name (OS specific).
-	#ifdef _WIN32
-		const size_t bufferSize = 255;
-		char nameBuffer[bufferSize];
-		unsigned long nameLength = bufferSize;
-		if (GetUserName(nameBuffer, &nameLength) != 0)
-		{
-			name = nameBuffer;
-		}
-	#else
-		char *nameBuffer = getenv("LOGNAME");
+#ifdef _WIN32
+	const size_t bufferSize = 255;
+	char nameBuffer[bufferSize];
+	unsigned long nameLength = bufferSize;
+	if (GetUserName(nameBuffer, &nameLength) != 0)
+	{
 		name = nameBuffer;
-	#endif
+	}
+#else
+	char *nameBuffer = getenv("LOGNAME");
+	name = nameBuffer;
+#endif
 
 	return(name);
 }
