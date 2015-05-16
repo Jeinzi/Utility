@@ -31,6 +31,7 @@ void	PrepareConsole(std::string ProgramName, std::string Version, std::string De
 void	PrintText(std::string Text, int Pause);
 bool	CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories = true);
 int		CountWords(std::string Text, bool RespectInterpunctation = true);
+std::string	GetAppDataDirectory();
 std::string	ToLower(std::string Text);
 std::string	FirstToUpper(std::string Text);
 std::string	GetWord(std::string Text, int Index);

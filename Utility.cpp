@@ -11,7 +11,6 @@ void Color(int ColorCode)
 // Prints a standardized error message.
 void Error(std::string Error)
 {
-	//Gibt eine standardm‰ﬂig formatierte Fehlermeldung aus
 	Color(ERROR_COLOR);
 	std::cout << "<!> ";
 	Color(OUTPUT_COLOR);
@@ -86,7 +85,6 @@ void PrintText(std::string Text, unsigned int Pause)
 // Copies a directory to a new location.
 bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories)
 {
-	//Kopiert einen Ordner an einen anderen Ort, standardm‰ﬂig mit Unterordnern
 	int				ErrorCode = 0;
 	std::string		TargetFilePath = "";
 	std::string		SourceFilePath = "";
@@ -96,7 +94,7 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 
 	std::cout << "Trying to copy files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
 
-	//Erstellt, wenn nˆtig, das Verzeichnis
+	// Creating directory.
 	if(!PathFileExists(TargetPath.c_str()))
 	{
 		std::cout << "Directory '" << TargetPath << "' does not exist." << std::endl;
@@ -182,6 +180,22 @@ int CountWords(std::string Text, bool RespectInterpunctation)
 	}
 
 	return(WordCount);
+}
+
+// Returns the path to the custom "Jeinzi" directory,
+// where all the application data is stored.
+std::string GetAppDataDirectory()
+{
+	std::string path;
+	#ifdef _WIN32
+		char roamingPath[PATH_MAX];
+		SHGetKnownFolderPath(FOLDERID_RoamingAppData, NULL, NULL, roamingPath);
+		path = std::string(roamingPath) + "/" + "Jeinzi";
+	#else
+		path = "/home/" + GetUserName() + "/.Jeinzi"
+	#endif
+
+	return(path);
 }
 
 // Converts a string to lower case.
@@ -343,7 +357,6 @@ std::string GetComputerName()
 	// Get an empty char array.
 	const size_t bufferSize = 255;
 	char computerName[bufferSize];
-	memset(computerName, 0, bufferSize);
 
 	// Get computer name (OS specific).
 	#ifdef _WIN32
