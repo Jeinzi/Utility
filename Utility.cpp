@@ -39,6 +39,7 @@ void PrintError(std::string error)
 // Waits until an arbitrary key is pressed.
 void Wait()
 {
+#ifdef _WIN32
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	while (true)
 	{
@@ -49,111 +50,147 @@ void Wait()
 		Sleep(100);
 	}
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+#else
+#endif
+}
+
+// Clears the terminal.
+void ClearTerminal()
+{
+#ifdef _WIN32
+	// TODO Don't invoke system().
+	system("cls");
+#else
+	// \x1B		Starting the escape sequence.
+	// [2J		Clears the entire screen.
+	// [1;1H	Sets the cursor to the top left corner.
+	std::cout << "\x1B[2J \x1B[1;1H";
+#endif
+}
+
+// Sets the title of the terminal
+void SetTerminalTitle(std::string title)
+{
+#ifdef _WIN32
+	SetConsoleTitle(title.c_str());
+#else
+	// TODO Add descriptive comment to ANSI escape sequence.
+	std::cout << "\x1B]0;" << title << "\007";
+#endif
 }
 
 // Clears the terminal and prints a standardized header.
-void PrepareConsole(std::string ProgramName, std::string Version, std::string Description)
+void PrepareConsole(std::string programName, std::string version, std::string description)
 {
-	std::string	Title = ProgramName + " " + Version;
-
-	system("cls");
+	std::string	title = programName + " " + version;
+	ClearTerminal();
+	SetTerminalTitle(title);
 	ChangeColor(Color::Input);
-	SetConsoleTitle(Title.c_str());
 
-	std::cout << "****************************** " << ProgramName << " ******************************" << std::endl << std::endl;
-	if (Description != "")
+	std::cout << "****************************** " << programName
+			  << " *****************************" << std::endl << std::endl;
+	
+	if (!description.empty())
 	{
-		std::cout << Description << std::endl << std::endl;
+		std::cout << description << std::endl << std::endl;
 	}
-	return;
 }
 
 // Prints a string letter by letter with an arbitrary delay.
 // Pressing 'q' will print the rest of the string instantly.
-void PrintText(std::string Text, unsigned int Pause)
+void PrintText(std::string text, unsigned int pause)
 {
-	if (Pause < 0)
+#ifdef _WIN32
+	if (pause < 0)
 	{
-		Pause = 0;
+		pause = 0;
 	}
 
-	for (unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		std::cout << Text[i];
+		std::cout << text[i];
 		if (_kbhit())
 		{
 			if (_getch() == 'q' || _getch() == 'Q')
 			{
-				for (i += 1; i < Text.length(); i++)
+				for (i += 1; i < text.length(); i++)
 				{
-					std::cout << Text[i];
+					std::cout << text[i];
 				}
 				break;
 			}
 		}
-		Sleep(Pause);
+		Sleep(pause);
 	}
 
 	std::cout << std::endl;
-	return;
+#else
+	// TODO Add Linux support.
+#endif
 }
 
+// TODO Review function
 // Copies a directory to a new location.
-bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories)
+bool CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubdirectories)
 {
-	int				ErrorCode = 0;
-	std::string		TargetFilePath = "";
-	std::string		SourceFilePath = "";
-	std::string		SearchPath = SourcePath + "/*";
-	HANDLE			HFind;
-	WIN32_FIND_DATA	FindFileData;
+#ifdef _WIN32
+	int				errorCode = 0;
+	std::string		targetFilePath = "";
+	std::string		sourceFilePath = "";
+	std::string		searchPath = sourcePath + "/*";
+	HANDLE			hFind;
+	WIN32_FIND_DATA	findFileData;
 
-	std::cout << "Trying to copy files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
+	std::cout << "Trying to copy files from '" << sourcePath << "' in '" << targetPath << "'." << std::endl;
 
 	// Creating directory.
-	if (!PathFileExists(TargetPath.c_str()))
+	if (!PathFileExists(targetPath.c_str()))
 	{
-		std::cout << "Directory '" << TargetPath << "' does not exist." << std::endl;
-		ErrorCode = CreateDirectory(TargetPath.c_str(), 0);
+		std::cout << "Directory '" << targetPath << "' does not exist." << std::endl;
+		errorCode = CreateDirectory(targetPath.c_str(), 0);
 		std::cout << "Created directory." << std::endl;
-		if (ErrorCode == 0)
+		if (errorCode == 0)
 		{
 			std::cout << "Error." << std::endl;
 			return(false);
 		}
 	}
 
-	std::cout << "Copying files from '" << SourcePath << "' in '" << TargetPath << "'." << std::endl;
+	std::cout << "Copying files from '" << sourcePath << "' in '" << targetPath << "'." << std::endl;
 
 	// Finding and copiing files.
-	HFind = FindFirstFile(SearchPath.c_str(), &FindFileData);
-	FindNextFile(HFind, &FindFileData);
-	while (FindNextFile(HFind, &FindFileData))
+	hFind = FindFirstFile(searchPath.c_str(), &findFileData);
+	FindNextFile(hFind, &findFileData);
+	while (FindNextFile(hFind, &findFileData))
 	{
 		std::cout << "Finding next File." << std::endl;
-		TargetFilePath = TargetPath + "\\" + FindFileData.cFileName;
-		SourceFilePath = SourcePath + "\\" + FindFileData.cFileName;
-		std::cout << "Copying files from '" << SourceFilePath << "' to '" << TargetFilePath << "'." << std::endl;
+		targetFilePath = targetPath + "\\" + findFileData.cFileName;
+		sourceFilePath = sourcePath + "\\" + findFileData.cFileName;
+		std::cout << "Copying files from '" << sourceFilePath << "' to '" << targetFilePath << "'." << std::endl;
 
 		// Copy directories and files.
-		if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+		if (findFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
 		{
 
-			if (CopySubdirectories)
+			if (copySubdirectories)
 			{
 				std::cout << "Copying directory." << std::endl;
-				CopyDirectory(SourceFilePath, TargetFilePath, true);
+				CopyDirectory(sourceFilePath, targetFilePath, true);
 			}
 		}
 		else
 		{
 			std::cout << "Copying file." << std::endl;
-			CopyFile(SourceFilePath.c_str(), TargetFilePath.c_str(), false);
+			CopyFile(sourceFilePath.c_str(), targetFilePath.c_str(), false);
 		}
 	}
-	FindClose(HFind);
+	FindClose(hFind);
 	std::cout << "Returning." << std::endl;
 	return(true);
+#else
+	// TODO Add Linux support.
+	return(false);
+#endif
 }
 
 //Copies the Files of one directory to another, without Subfolders
@@ -173,29 +210,30 @@ bool CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubd
 //}
 //   FindClose(hFind);
 
+// TODO Review function.
 // Returns the number of words in a string.
-int CountWords(std::string Text, bool RespectInterpunctation)
+int CountWords(std::string text, bool respectInterpunctation)
 {
-	bool	Word = false;
-	int		WordCount = 0;
+	bool	word = false;
+	int		wordCount = 0;
 
-	for (unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if (Text[i] != ' ' && ((Text[i] != ',' && Text[i] != '.' && Text[i] != '?' && Text[i] != '!') || !RespectInterpunctation))
+		if (text[i] != ' ' && ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!') || !respectInterpunctation))
 		{
-			if (Word == false)
+			if (word == false)
 			{
-				WordCount++;
+				wordCount++;
 			}
-			Word = true;
+			word = true;
 		}
 		else
 		{
-			Word = false;
+			word = false;
 		}
 	}
 
-	return(WordCount);
+	return(wordCount);
 }
 
 // Returns the path to the custom "Jeinzi" directory,
@@ -230,143 +268,142 @@ std::string GetAppDataDirectory()
 }
 
 // Converts a string to lower case.
-std::string ToLower(std::string Text)
+std::string ToLower(std::string text)
 {
-	transform(Text.begin(), Text.end(), Text.begin(), ::tolower);
-	return(Text);
+	transform(text.begin(), text.end(), text.begin(), ::tolower);
+	return(text);
 }
 
 // Capitalizes the first letter in a string.
-std::string FirstToUpper(std::string Text)
+std::string FirstToUpper(std::string text)
 {
-	//Wandelt den ersten Buchstaben eines Strings in einen Großbuchstaben um
-	if (Text == "")
-	{
-		return("");
-	}
+	if (text.empty()) return("");
 
-	transform(Text.begin(), Text.begin() + 1, Text.begin(), ::toupper);
-	return(Text);
+	transform(text.begin(), text.begin() + 1, text.begin(), ::toupper);
+	return(text);
 }
 
 // Returns the word at the specified index.
-std::string GetWord(std::string Text, int Index)
+std::string GetWord(std::string text, int index)
 {
-	unsigned int WordCount = 0;
-	std::string Word = "";
+	unsigned int wordCount = 0;
+	std::string word = "";
 
 	//Indexkorrektur
-	if (Index < 0)
+	if (index < 0)
 	{
-		Index = 0;
+		index = 0;
 	}
-	if (Text[0] != ' ')
+	if (text[0] != ' ')
 	{
-		WordCount = 1;
+		wordCount = 1;
 	}
 
-	for (unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if (Text[i] == ' ')
+		if (text[i] == ' ')
 		{
-			WordCount++;
+			wordCount++;
 			continue;
 		}
-		if (WordCount == Index)
+		if (wordCount == index)
 		{
-			Word += Text[i];
+			word += text[i];
 		}
 	}
 
-	return(Word);
+	return(word);
 }
 
+// TODO Remove function?
 // Reverses a string!
-std::string ReverseString(std::string Text)
+std::string ReverseString(std::string text)
 {
-	std::string Output = "";
+	std::string output = "";
 
-	for (int i = Text.length() - 1; i >= 0; i--)
+	for (int i = text.length() - 1; i >= 0; i--)
 	{
-		Output += Text[i];
+		output += text[i];
 	}
 
-	return(Output);
+	return(output);
 }
 
+// TODO Rename function?
 // Converts an integer to a hex formatted string.
-std::string IntToHex(int Number)
+std::string IntToHex(int number)
 {
-	int			Temp = 0;
-	std::string	Output = "";
+	int			temp = 0;
+	std::string	output = "";
 
-	if (Number < 1)
+	if (number < 1)
 	{
 		return("0");
 	}
 
-	while (Number > 0)
+	while (number > 0)
 	{
-		Temp = Number % 16;
+		temp = number % 16;
 
-		if (Temp <= 9)
+		if (temp <= 9)
 		{
-			Output += std::to_string(Temp);
+			output += std::to_string(temp);
 		}
 		else
 		{
-			switch (Temp)
+			switch (temp)
 			{
 			case 10:
-				Output += 'A';
+				output += 'A';
 				break;
 			case 11:
-				Output += 'B';
+				output += 'B';
 				break;
 			case 12:
-				Output += 'C';
+				output += 'C';
 				break;
 			case 13:
-				Output += 'D';
+				output += 'D';
 				break;
 			case 14:
-				Output += 'E';
+				output += 'E';
 				break;
 			case 15:
-				Output += 'F';
+				output += 'F';
 				break;
 			default:
+				// TODO What does this error message want to tell us?
 				std::cout << "Fehler in IntToHex: Integer ist keine Hexadezimale Ziffer." << std::endl;
 			}
 		}
 
-		Number /= 16;
+		number /= 16;
 	}
 
-	Output = ReverseString(Output);
-	return(Output);
+	output = ReverseString(output);
+	return(output);
 }
 
 // Escapes a string for use in an URL (special characters are converted in a hex code).
-std::string Escape(std::string Text)
+std::string Escape(std::string text)
 {
-	std::string Output = "";
+	std::string output = "";
 
-	for (unsigned int i = 0; i < Text.length(); i++)
+	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if ((Text[i] >= 48 && Text[i] <= 57) || (Text[i] >= 65 && Text[i] <= 90) || (Text[i] >= 97 && Text[i] <= 122) || Text[i] == '@' || Text[i] == '*' || Text[i] == '-' || Text[i] == '_' || Text[i] == '+' || Text[i] == '.' || Text[i] == '/')
+		if ((text[i] >= 48 && text[i] <= 57) || (text[i] >= 65 && text[i] <= 90) || (text[i] >= 97 && text[i] <= 122) || text[i] == '@' || text[i] == '*' || text[i] == '-' || text[i] == '_' || text[i] == '+' || text[i] == '.' || text[i] == '/')
 		{
-			Output += Text[i];
+			output += text[i];
 		}
 		else
 		{
-			Output += '%';
-			unsigned char Temp = Text[i];
-			Output += IntToHex(Temp);
+			output += '%';
+			unsigned char temp = text[i];
+			output += IntToHex(temp);
 		}
 	}
 
-	return(Output);
+	return(output);
 }
 
 // Returns the computer's name. Empty string, if no name could be retrieved.
@@ -417,28 +454,28 @@ std::string GetUserName()
 }
 
 // Returns the format of a specified file name.
-std::string GetFileFormat(std::string FileName)
+std::string GetFileFormat(std::string fileName)
 {
-	bool	FoundDot = false;
-	std::string	Format = "";
+	bool	foundDot = false;
+	std::string	format = "";
 
 	// Searches the string from last to first character.
-	for (int i = FileName.length() - 1; i >= 0; i--)
+	for (int i = fileName.length() - 1; i >= 0; i--)
 	{
 		// If a dot has been found, all characters to the end of the string are copied.
-		if (FileName[i] == '.')
+		if (fileName[i] == '.')
 		{
-			FoundDot = true;
+			foundDot = true;
 			i++;
-			for (unsigned int j = i; j < FileName.length(); j++)
+			for (unsigned int j = i; j < fileName.length(); j++)
 			{
-				Format += FileName[j];
+				format += fileName[j];
 			}
 			break;
 		}
 	}
 
-	return(Format);
+	return(format);
 }
 
 // Returns the filename from a path.

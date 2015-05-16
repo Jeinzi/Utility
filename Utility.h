@@ -5,14 +5,14 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include <conio.h>
-#include <Shlwapi.h>
-#pragma comment(lib, "shlwapi.lib")
 
 #ifdef _WIN32
 	#include <Windows.h>
 	// Shell used to retrieve known folder paths (AppData, UserDirectory etc.).
 	#include <ShlObj.h>
+	#include <conio.h>
+	#include <Shlwapi.h>
+	#pragma comment(lib, "shlwapi.lib")
 #else
 	// Provides access to the POSIX operating system API. (gethostname() etc.)
 	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
@@ -74,20 +74,22 @@ enum class Color
 void	ChangeColor(Color color);
 void	PrintError(std::string error);
 void	Wait();
-void	PrepareConsole(std::string ProgramName, std::string Version, std::string Description = "");
-void	PrintText(std::string Text, int Pause);
-bool	CopyDirectory(std::string SourcePath, std::string TargetPath, bool CopySubdirectories = true);
-int		CountWords(std::string Text, bool RespectInterpunctation = true);
+void	ClearTerminal();
+void	SetTerminalTitle(std::string title);
+void	PrepareConsole(std::string programName, std::string version, std::string description = "");
+void	PrintText(std::string text, int pause);
+bool	CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubdirectories = true);
+int		CountWords(std::string text, bool respectInterpunctation = true);
 std::string	GetAppDataDirectory();
-std::string	ToLower(std::string Text);
-std::string	FirstToUpper(std::string Text);
-std::string	GetWord(std::string Text, int Index);
-std::string	IntToHex(int Number);
-std::string	ReverseString(std::string Text);
-std::string	Escape(std::string Text);
+std::string	ToLower(std::string text);
+std::string	FirstToUpper(std::string text);
+std::string	GetWord(std::string text, int index);
+std::string	IntToHex(int number);
+std::string	ReverseString(std::string text);
+std::string	Escape(std::string text);
 std::string	GetComputerName();
 std::string	GetUserName();
-std::string	GetFileFormat(std::string FileName);
-std::string	GetFileName(std::string Path);
+std::string	GetFileFormat(std::string path);
+std::string	GetFileName(std::string path);
 
 #endif
