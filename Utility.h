@@ -2,7 +2,7 @@
 #define UTILITY_H
 
 #include <iostream>
-#include <Windows.h>
+#include <sstream>
 #include <string>
 #include <algorithm>
 #include <conio.h>
@@ -11,10 +11,14 @@
 
 #ifdef _WIN32
 	#include <Windows.h>
+	// Shell used to retrieve known folder paths (AppData, UserDirectory etc.).
+	#include <ShlObj.h>
 #else
 	// Provides access to the POSIX operating system API.
 	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
 	#include <unistd.h>
+	// Used to retrieve environment variables.
+	#include <stdlib.h>
 #endif
 
 // Defines.
@@ -38,8 +42,8 @@ std::string	GetWord(std::string Text, int Index);
 std::string	IntToHex(int Number);
 std::string	ReverseString(std::string Text);
 std::string	Escape(std::string Text);
-std::string	GetUserName();
 std::string	GetComputerName();
+std::string	GetUserName();
 std::string	GetFileFormat(std::string FileName);
 std::string	GetFileName(std::string Path);
 

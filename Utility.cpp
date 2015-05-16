@@ -184,15 +184,30 @@ int CountWords(std::string Text, bool RespectInterpunctation)
 
 // Returns the path to the custom "Jeinzi" directory,
 // where all the application data is stored.
+// Empty string, when operation was unsuccessful.
 std::string GetAppDataDirectory()
 {
 	std::string path;
+
 	#ifdef _WIN32
-		char roamingPath[PATH_MAX];
-		SHGetKnownFolderPath(FOLDERID_RoamingAppData, NULL, NULL, roamingPath);
-		path = std::string(roamingPath) + "/" + "Jeinzi";
+		// Memory for roamingPath is allocated by SHGetKnownFolderPath()!
+		wchar_t* roamingPath = nullptr;
+		if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, NULL, NULL, &roamingPath)))
+		{
+			std::wstringstream ss;
+			ss << roamingPath << L"\\Jeinzi";
+			std::wstring wide = ss.str();
+			path = std::string(wide.begin(), wide.end());
+
+			// Free memory.
+			CoTaskMemFree(static_cast<void*>(roamingPath));
+		}
+		else
+		{
+			path = "";
+		}
 	#else
-		path = "/home/" + GetUserName() + "/.Jeinzi"
+		path = std::string(getenv("HOME")) + "/.Jeinzi";
 	#endif
 
 	return(path);
@@ -338,42 +353,51 @@ std::string Escape(std::string Text)
 	return(Output);
 }
 
-// Returns the username.
-std::string GetUserName()
-{
-	DWORD	Size;
-	char	UserName[255];
-
-	Size = sizeof(UserName);
-	GetUserName(UserName, &Size);
-
-	return UserName;
-}
-
-// Returns the computer's name. NULL, if no name could be retrieved.
+// Returns the computer's name. Empty string, if no name could be retrieved.
 std::string GetComputerName()
 {
-	bool success = true;
 	// Get an empty char array.
 	const size_t bufferSize = 255;
-	char computerName[bufferSize];
+	char nameBuffer[bufferSize];
+	std::string name;
 
 	// Get computer name (OS specific).
 	#ifdef _WIN32
-		int nameLength = bufferSize;
-		if(GetComputerName(ComputerName, &nameLength) == 0)
+		unsigned long nameLength = bufferSize;
+		if (GetComputerName(nameBuffer, &nameLength) != 0)
 		{
-			success = false;
+			name = nameBuffer;
 		}
 	#else
-		if(gethostname(computerName, bufferSize) != 0)
+		if (gethostname(nameBuffer, bufferSize) == 0)
 		{
-			success = false;
+			name = nameBuffer;
 		}
 	#endif
 
-	if(!success) computerName = NULL;
-	return(computerName);
+	return(name);
+}
+
+// Returns the username. Empty string, if no name could be retrieved.
+std::string GetUserName()
+{
+	std::string name;
+
+	// Get user name (OS specific).
+	#ifdef _WIN32
+		const size_t bufferSize = 255;
+		char nameBuffer[bufferSize];
+		unsigned long nameLength = bufferSize;
+		if (GetUserName(nameBuffer, &nameLength) != 0)
+		{
+			name = nameBuffer;
+		}
+	#else
+		char *nameBuffer = getenv("LOGNAME");
+		name = nameBuffer;
+	#endif
+
+	return(name);
 }
 
 // Returns the format of a specified file name.
