@@ -336,16 +336,31 @@ std::string GetUserName()
 	return UserName;
 }
 
-// Returns the computer's name.
+// Returns the computer's name. NULL, if no name could be retrieved.
 std::string GetComputerName()
 {
-	DWORD	Size;
-	char	ComputerName[255];
+	bool success = true;
+	// Get an empty char array.
+	const size_t bufferSize = 255;
+	char computerName[bufferSize];
+	memset(computerName, 0, bufferSize);
 
-	Size = sizeof(ComputerName);
-	GetComputerName(ComputerName, &Size);
+	// Get computer name (OS specific).
+	#ifdef _WIN32
+		int nameLength = bufferSize;
+		if(GetComputerName(ComputerName, &nameLength) == 0)
+		{
+			success = false;
+		}
+	#else
+		if(gethostname(computerName, bufferSize) != 0)
+		{
+			success = false;
+		}
+	#endif
 
-	return ComputerName;
+	if(!success) computerName = NULL;
+	return(computerName);
 }
 
 // Returns the format of a specified file name.

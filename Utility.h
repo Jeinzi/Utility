@@ -9,13 +9,21 @@
 #include <Shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-//Defines
+#ifdef _WIN32
+	#include <Windows.h>
+#else
+	// Provides access to the POSIX operating system API.
+	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
+	#include <unistd.h>
+#endif
+
+// Defines.
 #define ERROR_COLOR 4
 #define OK_COLOR 6
 #define INPUT_COLOR 15
 #define OUTPUT_COLOR 7
 
-//Funktionsprototypen
+// Function prototypes.
 void	Color(int ColorCode);
 void	Error(std::string Error);
 void	Wait();
