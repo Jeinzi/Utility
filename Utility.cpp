@@ -33,7 +33,7 @@ void PrintError(std::string error)
 	std::cout << error;
 	ChangeColor(Color::Error);
 	std::cout << " <!>" << std::endl;
-	ChangeColor(Color::Output);
+	ChangeColor(Color::Output)
 }
 
 // Waits until an arbitrary key is pressed.
@@ -58,8 +58,17 @@ void Wait()
 void ClearTerminal()
 {
 #ifdef _WIN32
-	// TODO Don't invoke system().
-	system("cls");
+	COORD origin = { 0, 0 };
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	// Get number of cells in console.
+	GetConsoleScreenBufferInfo(console, &consoleInfo);
+	DWORD written, cells = consoleInfo.dwSize.X * consoleInfo.dwSize.Y;
+	// Fill all the cells with a blank.
+	FillConsoleOutputCharacter(console, ' ', cells, origin, &written);
+	FillConsoleOutputAttribute(console, consoleInfo.wAttributes, cells, origin, &written);
+	SetConsoleCursorPosition(console, origin);
 #else
 	// \x1B		Starting the escape sequence.
 	// [2J		Clears the entire screen.
@@ -88,8 +97,8 @@ void PrepareConsole(std::string programName, std::string version, std::string de
 	ChangeColor(Color::Input);
 
 	std::cout << "****************************** " << programName
-			  << " *****************************" << std::endl << std::endl;
-	
+		<< " *****************************" << std::endl << std::endl;
+
 	if (!description.empty())
 	{
 		std::cout << description << std::endl << std::endl;
