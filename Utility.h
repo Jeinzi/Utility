@@ -17,7 +17,7 @@
 #else
 	// Provides access to the POSIX operating system API. (gethostname() etc.)
 	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
-	// Used: STDIN_FILENO in Wait() function.
+	// Used: STDIN_FILENO in Wait(), sleep().
 	#include <unistd.h>
 	// Used to retrieve environment variables.
 	#include <stdlib.h>

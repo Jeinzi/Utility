@@ -47,7 +47,7 @@ void Wait()
 	termios oldSettings, newSettings;
 
 	// Get current terminal configuration.
-	// STDIN_FILENOis thedefault standard input file descriptor.
+	// STDIN_FILENO is the default standard input file descriptor.
 	tcgetattr(STDIN_FILENO, &oldSettings);
 	newSettings = oldSettings;
 
@@ -123,15 +123,10 @@ void PrepareConsole(std::string programName, std::string version, std::string de
 // Pressing 'q' will print the rest of the string instantly.
 void PrintText(std::string text, unsigned int pause)
 {
-#ifdef _WIN32
-	if (pause < 0)
-	{
-		pause = 0;
-	}
-
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		std::cout << text[i];
+#ifdef _WIN32
 		if (_kbhit())
 		{
 			if (_getch() == 'q' || _getch() == 'Q')
@@ -144,12 +139,13 @@ void PrintText(std::string text, unsigned int pause)
 			}
 		}
 		Sleep(pause);
+#else
+		// TODO: Add linux support for quitting.
+		sleep(pause);
+#endif
 	}
 
 	std::cout << std::endl;
-#else
-	// TODO Add Linux support.
-#endif
 }
 
 // TODO Review function
