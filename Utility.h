@@ -82,7 +82,7 @@ void	Wait();
 void	ClearTerminal();
 void	SetTerminalTitle(std::string title);
 void	PrepareConsole(std::string programName, std::string version, std::string description = "");
-void	PrintText(std::string text, int pause);
+void	PrintText(std::string text, unsigned int pause);
 bool	CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubdirectories = true);
 int		CountWords(std::string text, bool respectInterpunctation = true);
 std::string	GetAppDataDirectory();

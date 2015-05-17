@@ -126,6 +126,7 @@ void PrintText(std::string text, unsigned int pause)
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		std::cout << text[i];
+		fflush(stdout);
 #ifdef _WIN32
 		if (_kbhit())
 		{
@@ -141,7 +142,7 @@ void PrintText(std::string text, unsigned int pause)
 		Sleep(pause);
 #else
 		// TODO: Add linux support for quitting.
-		sleep(pause);
+		usleep(pause * 1000);
 #endif
 	}
 
@@ -473,22 +474,22 @@ std::string GetUserName()
 }
 
 // Returns the format of a specified file name.
-std::string GetFileFormat(std::string fileName)
+std::string GetFileFormat(std::string path)
 {
-	bool	foundDot = false;
+	bool		foundDot = false;
 	std::string	format = "";
 
 	// Searches the string from last to first character.
-	for (int i = fileName.length() - 1; i >= 0; i--)
+	for (int i = path.length() - 1; i >= 0; i--)
 	{
 		// If a dot has been found, all characters to the end of the string are copied.
-		if (fileName[i] == '.')
+		if (path[i] == '.')
 		{
 			foundDot = true;
 			i++;
-			for (unsigned int j = i; j < fileName.length(); j++)
+			for (unsigned int j = i; j < path.length(); j++)
 			{
-				format += fileName[j];
+				format += path[j];
 			}
 			break;
 		}
