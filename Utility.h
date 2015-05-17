@@ -10,15 +10,20 @@
 	#include <Windows.h>
 	// Shell used to retrieve known folder paths (AppData, UserDirectory etc.).
 	#include <ShlObj.h>
+	// Library introduced by Borland to deal with the console, still supported by Visual Studio.
 	#include <conio.h>
 	#include <Shlwapi.h>
 	#pragma comment(lib, "shlwapi.lib")
 #else
 	// Provides access to the POSIX operating system API. (gethostname() etc.)
 	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
+	// Used: STDIN_FILENO in Wait() function.
 	#include <unistd.h>
 	// Used to retrieve environment variables.
 	#include <stdlib.h>
+	// Contains the definitions used by the terminal I/O interfaces.
+	// Used in Wait() function.
+	#include <termios.h>
 #endif
 
 // Enum representing a color.
