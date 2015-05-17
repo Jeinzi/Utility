@@ -41,16 +41,30 @@ void Wait()
 {
 #ifdef _WIN32
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-	while (true)
-	{
-		if (_kbhit())
-		{
-			break;
-		}
-		Sleep(100);
-	}
-	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+	_getch();
 #else
+	// The termios struct stores flags which can manipulate the I/O Interface.
+	termios oldSettings, newSettings;
+
+	// Get current terminal configuration.
+	// STDIN_FILENOis thedefault standard input file descriptor.
+	tcgetattr(STDIN_FILENO, &oldSettings);
+	newSettings = oldSettings;
+
+	// Turning flags off.
+	// ECHO: displaying user input.
+	// ICANON: returning string on enter/EOF/EOL
+	newSettings.c_lflag &= ~(ICANON | ECHO );
+
+	// Setting parameters to terminal.
+	// TCSANOW: change parameters immediately.
+	tcsetattr( STDIN_FILENO, TCSANOW, &newSettings);
+
+	// Requesting char.
+	getchar();
+
+	// Writing old settings back to terminal.
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldSettings);
 #endif
 }
 
@@ -89,7 +103,7 @@ void PrepareConsole(std::string programName, std::string version, std::string de
 
 	std::cout << "****************************** " << programName
 			  << " *****************************" << std::endl << std::endl;
-	
+
 	if (!description.empty())
 	{
 		std::cout << description << std::endl << std::endl;
