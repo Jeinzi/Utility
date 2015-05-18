@@ -103,16 +103,40 @@ void SetTerminalTitle(std::string title)
 }
 
 // Clears the terminal and prints a standardized header.
-void PrepareConsole(std::string programName, std::string version, std::string description)
+void PrepareTerminal(std::string programName, std::string version, std::string description)
 {
+	// Set terminal title.
 	std::string	title = programName + " " + version;
 	ClearTerminal();
 	SetTerminalTitle(title);
 	ChangeColor(Color::Input);
 
-	std::cout << "****************************** " << programName
-		<< " *****************************" << std::endl << std::endl;
+	// Get console width and fill first row with asterisks.
+	unsigned long asterisksLeft;
+	unsigned long asterisksRight;
 
+#ifdef _WIN32
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(console, &consoleInfo);
+	asterisksLeft = (consoleInfo.dwSize.X - (programName.length() + 2)) / 2;
+	asterisksRight = (consoleInfo.dwSize.X - (programName.length() + 2)) / 2
+		+ (consoleInfo.dwSize.X - (programName.length() + 2)) % 2;
+#else
+	asterisksLeft = 30;
+	asterisksRight = 30;
+#endif
+
+	// Assembling caption.
+	std::string caption;
+	for (unsigned int i = 0; i < asterisksLeft; i++) caption += "*";
+	caption += " ";
+	caption += programName;
+	caption += " ";
+	for (unsigned int i = 0; i < asterisksRight; i++) caption += "*";
+
+	// Printing.
+	std::cout << caption << std::endl << std::endl;
 	if (!description.empty())
 	{
 		std::cout << description << std::endl << std::endl;

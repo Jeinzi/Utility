@@ -17,7 +17,7 @@
 #else
 	// Provides access to the POSIX operating system API. (gethostname() etc.)
 	// Defines  miscellaneous  symbolic constants and types, and declares miscellaneous functions.
-	// Used: STDIN_FILENO in Wait(), sleep().
+	// Used: STDIN_FILENO in Wait(), usleep().
 	#include <unistd.h>
 	// Used to retrieve environment variables.
 	#include <stdlib.h>
@@ -81,7 +81,7 @@ void	PrintError(std::string error);
 void	Wait();
 void	ClearTerminal();
 void	SetTerminalTitle(std::string title);
-void	PrepareConsole(std::string programName, std::string version, std::string description = "");
+void	PrepareTerminal(std::string programName, std::string version, std::string description = "");
 void	PrintText(std::string text, unsigned int pause);
 bool	CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubdirectories = true);
 int		CountWords(std::string text, bool respectInterpunctation = true);
