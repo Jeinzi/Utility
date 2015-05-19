@@ -254,18 +254,22 @@ bool CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubd
 //}
 //   FindClose(hFind);
 
-// TODO Review function.
 // Returns the number of words in a string.
+// respectInterpunctation defaults to true.
 int CountWords(std::string text, bool respectInterpunctation)
 {
 	bool	word = false;
 	int		wordCount = 0;
 
+	// Search through string.
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if (text[i] != ' ' && ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!') || !respectInterpunctation))
+		// If there isn't a char separating different words, wordCount is incremented once.
+		if (text[i] != ' '
+			&& ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
+			|| !respectInterpunctation))
 		{
-			if (word == false)
+			if (!word)
 			{
 				wordCount++;
 			}
@@ -328,35 +332,39 @@ std::string FirstToUpper(std::string text)
 }
 
 // Returns the word at the specified index.
-std::string GetWord(std::string text, int index)
+std::string GetWord(std::string text, unsigned int index)
 {
-	unsigned int wordCount = 0;
-	std::string word = "";
+	bool respectInterpunctation = true;
+	bool word = false;
+	int currentIndex = -1;
+	std::string extractedWord = "";
 
-	//Indexkorrektur
-	if (index < 0)
-	{
-		index = 0;
-	}
-	if (text[0] != ' ')
-	{
-		wordCount = 1;
-	}
-
+	// Search through string.
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if (text[i] == ' ')
+		if (text[i] != ' '
+			&& ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
+			|| !respectInterpunctation))
 		{
-			wordCount++;
-			continue;
+			// If there is no space or punctation mark, there is a word.
+			// Following chars will be extracted until the next occurence of a non-word-character.
+			if (!word)
+			{
+				currentIndex++;
+			}
+			word = true;
+			if (currentIndex == index)
+			{
+				extractedWord += text[i];
+			}
 		}
-		if (wordCount == index)
+		else
 		{
-			word += text[i];
+			word = false;
 		}
 	}
 
-	return(word);
+	return(extractedWord);
 }
 
 // TODO Remove function?
