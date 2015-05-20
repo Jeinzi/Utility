@@ -362,29 +362,33 @@ std::string GetWord(std::string text, unsigned int index)
 	return(extractedWord);
 }
 
-// TODO Rename function?
 // Converts an integer to a hex formatted string.
-std::string IntToHex(int number)
+std::string IntToHexString(int number)
 {
-	int			temp = 0;
-	std::string	output = "";
+	if (number == 0) return("0");
 
-	if (number < 1)
+	bool positive = true;
+	int			remainder;
+	std::string	output;
+	// Remember sign and deal with positive number.
+	if (number < 0)
 	{
-		return("0");
+		positive = false;
+		number = -number;
 	}
 
+	// Add remainder auf (number % 16) to string, then divide by 16.
 	while (number > 0)
 	{
-		temp = number % 16;
+		remainder = number % 16;
 
-		if (temp <= 9)
+		if (remainder <= 9)
 		{
-			output += std::to_string(temp);
+			output += std::to_string(remainder);
 		}
 		else
 		{
-			switch (temp)
+			switch (remainder)
 			{
 			case 10:
 				output += 'A';
@@ -404,16 +408,16 @@ std::string IntToHex(int number)
 			case 15:
 				output += 'F';
 				break;
-			default:
-				// TODO What does this error message want to tell us?
-				std::cout << "Fehler in IntToHex: Integer ist keine Hexadezimale Ziffer." << std::endl;
 			}
 		}
 
 		number /= 16;
 	}
 
-	output = ReverseString(output);
+	// Add sign.
+	if (!positive) output += "-";
+	// Reverse string.
+	std::reverse(output.begin(), output.end());
 	return(output);
 }
 
@@ -432,7 +436,7 @@ std::string Escape(std::string text)
 		{
 			output += '%';
 			unsigned char temp = text[i];
-			output += IntToHex(temp);
+			output += IntToHexString(temp);
 		}
 	}
 

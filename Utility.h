@@ -89,7 +89,7 @@ std::string	GetAppDataDirectory();
 std::string	ToLower(std::string text);
 std::string	FirstToUpper(std::string text);
 std::string	GetWord(std::string text, unsigned int index);
-std::string	IntToHex(int number);
+std::string	IntToHexString(int number);
 std::string	ReverseString(std::string text);
 std::string	Escape(std::string text);
 std::string	GetComputerName();
