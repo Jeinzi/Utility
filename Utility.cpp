@@ -256,7 +256,7 @@ bool CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubd
 
 // Returns the number of words in a string.
 // respectInterpunctation defaults to true.
-int CountWords(std::string text, bool respectInterpunctation)
+int CountWords(std::string text)
 {
 	bool	word = false;
 	int		wordCount = 0;
@@ -265,9 +265,7 @@ int CountWords(std::string text, bool respectInterpunctation)
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		// If there isn't a char separating different words, wordCount is incremented once.
-		if (text[i] != ' '
-			&& ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
-			|| !respectInterpunctation))
+		if (text[i] != ' ' && text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
 		{
 			if (!word)
 			{
@@ -334,7 +332,6 @@ std::string FirstToUpper(std::string text)
 // Returns the word at the specified index.
 std::string GetWord(std::string text, unsigned int index)
 {
-	bool respectInterpunctation = true;
 	bool word = false;
 	int currentIndex = -1;
 	std::string extractedWord = "";
@@ -342,9 +339,7 @@ std::string GetWord(std::string text, unsigned int index)
 	// Search through string.
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if (text[i] != ' '
-			&& ((text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
-			|| !respectInterpunctation))
+		if (text[i] != ' ' && text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
 		{
 			// If there is no space or punctation mark, there is a word.
 			// Following chars will be extracted until the next occurence of a non-word-character.
@@ -365,20 +360,6 @@ std::string GetWord(std::string text, unsigned int index)
 	}
 
 	return(extractedWord);
-}
-
-// TODO Remove function?
-// Reverses a string!
-std::string ReverseString(std::string text)
-{
-	std::string output = "";
-
-	for (int i = text.length() - 1; i >= 0; i--)
-	{
-		output += text[i];
-	}
-
-	return(output);
 }
 
 // TODO Rename function?
