@@ -421,14 +421,18 @@ std::string IntToHexString(int number)
 	return(output);
 }
 
-// Escapes a string for use in an URL (special characters are converted in a hex code).
+// Escapes a string for use in an URL (reserved characters are converted in a hex code).
 std::string Escape(std::string text)
 {
 	std::string output = "";
 
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
-		if ((text[i] >= 48 && text[i] <= 57) || (text[i] >= 65 && text[i] <= 90) || (text[i] >= 97 && text[i] <= 122) || text[i] == '@' || text[i] == '*' || text[i] == '-' || text[i] == '_' || text[i] == '+' || text[i] == '.' || text[i] == '/')
+		if (isalnum(text[i])
+			|| text[i] == '-'
+			|| text[i] == '_'
+			|| text[i] == '.'
+			|| text[i] == '~')
 		{
 			output += text[i];
 		}
