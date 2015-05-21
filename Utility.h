@@ -24,6 +24,8 @@
 	// Contains the definitions used by the terminal I/O interfaces.
 	// Used in Wait() function.
 	#include <termios.h>
+	// Used to manipulate file descriptor as in PrintText().
+	#include <fcntl.h>
 #endif
 
 // Enum representing a color.

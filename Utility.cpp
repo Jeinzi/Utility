@@ -24,6 +24,7 @@ void ChangeColor(Color color)
 #endif
 }
 
+
 // Prints a standardized error message.
 void PrintError(std::string error)
 {
@@ -35,6 +36,7 @@ void PrintError(std::string error)
 	std::cout << " <!>" << std::endl;
 	ChangeColor(Color::Output);
 }
+
 
 // Waits until an arbitrary key is pressed.
 void Wait()
@@ -68,6 +70,7 @@ void Wait()
 #endif
 }
 
+
 // Clears the terminal.
 void ClearTerminal()
 {
@@ -91,6 +94,7 @@ void ClearTerminal()
 #endif
 }
 
+
 // Sets the title of the terminal
 void SetTerminalTitle(std::string title)
 {
@@ -103,6 +107,7 @@ void SetTerminalTitle(std::string title)
 	std::cout << "\x1B]0;" << title << "\007";
 #endif
 }
+
 
 // Clears the terminal and prints a standardized header.
 void PrepareTerminal(std::string programName, std::string version, std::string description)
@@ -125,6 +130,7 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	asterisksRight = (consoleInfo.dwSize.X - (programName.length() + 2)) / 2
 		+ (consoleInfo.dwSize.X - (programName.length() + 2)) % 2;
 #else
+	// TODO: Get terminal width under linux.
 	asterisksLeft = 30;
 	asterisksRight = 30;
 #endif
@@ -145,35 +151,81 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	}
 }
 
+
 // Prints a string letter by letter with an arbitrary delay.
 // Pressing 'q' will print the rest of the string instantly.
 void PrintText(std::string text, unsigned int pause)
 {
+	// Need to change behaviour of terminal when using Linux
+	// in order to check if a key has been pressed
+	// while constantly printing characters.
+#ifdef __linux__
+	// Disable echo and waiting for user input.
+	// See Wait() for detailed comments.
+	termios oldSettings, newSettings;
+	tcgetattr(STDIN_FILENO, &oldSettings);
+
+	newSettings = oldSettings;
+	newSettings.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr( STDIN_FILENO, TCSANOW, &newSettings);
+
+	// Using fcntl() in fcntl.h to manipulate file descriptor.
+	// F_GETFL:	Get file descriptor of standard in-/output.
+	int oldFileDescriptor = fcntl(STDIN_FILENO, F_GETFL);
+	// Set new file descriptor with O_NONBLOCK flag disabled.
+	// O_NONBLOCK:	No operation on the file descriptor
+	// 		will cause the calling process to wait.
+	fcntl(STDIN_FILENO, F_SETFL, oldFileDescriptor | O_NONBLOCK);
+#endif
+
+	// All OSs: Print characters of string one by one.
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		std::cout << text[i];
+		// Forcing to print everything in buffer instantly (needed for linux).
 		fflush(stdout);
+		char chr;
+
+
+		// Get char if a key has been pressed.
 #ifdef _WIN32
 		if (_kbhit())
 		{
-			if (_getch() == 'q' || _getch() == 'Q')
-			{
-				for (i += 1; i < text.length(); i++)
-				{
-					std::cout << text[i];
-				}
-				break;
-			}
+			chr = _getch();
 		}
+#else
+		chr = getchar();
+#endif
+
+		// All OSs: Convert char to lower case.
+		chr = ToLower(std::string(1, chr))[0];
+		// Print the remaining string instantly when q has been pressed.
+		if (chr == 'q')
+		{
+			for (i += 1; i < text.length(); i++)
+			{
+				std::cout << text[i];
+			}
+			break;
+		}
+
+		// Sleep between two characters.
+#ifdef _WIN32
 		Sleep(pause);
 #else
-		// TODO: Add linux support for quitting.
 		usleep(pause * 1000);
 #endif
 	}
 
+	// Reset terminal to previous settings when running on linux.
+#ifdef __linux__
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldSettings);
+	fcntl(STDIN_FILENO, F_SETFL, oldFileDescriptor);
+#endif
+
 	std::cout << std::endl;
 }
+
 
 // TODO Review function
 // Copies a directory to a new location.
@@ -256,6 +308,7 @@ bool CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubd
 //}
 //   FindClose(hFind);
 
+
 // Returns the number of words in a string.
 // respectInterpunctation defaults to true.
 int CountWords(std::string text)
@@ -283,6 +336,7 @@ int CountWords(std::string text)
 
 	return(wordCount);
 }
+
 
 // Returns the path to the custom "Jeinzi" directory,
 // where all the application data is stored.
@@ -315,12 +369,14 @@ std::string GetAppDataDirectory()
 	return(path);
 }
 
+
 // Converts a string to lower case.
 std::string ToLower(std::string text)
 {
 	transform(text.begin(), text.end(), text.begin(), ::tolower);
 	return(text);
 }
+
 
 // Capitalizes the first letter in a string.
 std::string FirstToUpper(std::string text)
@@ -330,6 +386,7 @@ std::string FirstToUpper(std::string text)
 	transform(text.begin(), text.begin() + 1, text.begin(), ::toupper);
 	return(text);
 }
+
 
 // Returns the word at the specified index.
 std::string GetWord(std::string text, unsigned int index)
@@ -363,6 +420,7 @@ std::string GetWord(std::string text, unsigned int index)
 
 	return(extractedWord);
 }
+
 
 // Converts an integer to a hex formatted string.
 std::string IntToHexString(int number)
@@ -423,6 +481,7 @@ std::string IntToHexString(int number)
 	return(output);
 }
 
+
 // Escapes a string for use in an URL (reserved characters are converted in a hex code).
 std::string Escape(std::string text)
 {
@@ -449,6 +508,7 @@ std::string Escape(std::string text)
 	return(output);
 }
 
+
 // Returns the computer's name. Empty string, if no name could be retrieved.
 std::string GetComputerName()
 {
@@ -474,6 +534,7 @@ std::string GetComputerName()
 	return(name);
 }
 
+
 // Returns the username. Empty string, if no name could be retrieved.
 std::string GetUserName()
 {
@@ -495,6 +556,7 @@ std::string GetUserName()
 
 	return(name);
 }
+
 
 // Returns the format of a specified file name.
 std::string GetFileFormat(std::string path)
@@ -520,6 +582,7 @@ std::string GetFileFormat(std::string path)
 
 	return(format);
 }
+
 
 // Returns the filename from a path.
 std::string GetFileName(std::string path)
