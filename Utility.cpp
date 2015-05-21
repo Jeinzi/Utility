@@ -97,7 +97,9 @@ void SetTerminalTitle(std::string title)
 #ifdef _WIN32
 	SetConsoleTitle(title.c_str());
 #else
-	// TODO Add descriptive comment to ANSI escape sequence.
+	// \x1B		Starting xterm escape sequence.
+	// \0;		Set icon name and window title.
+	// \007		Bell character.
 	std::cout << "\x1B]0;" << title << "\007";
 #endif
 }
