@@ -118,7 +118,8 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	SetTerminalTitle(title);
 	ChangeColor(Color::Input);
 
-	// Get console width and fill first row with asterisks.
+	// Get console width (OS dependent).
+	unsigned long width;
 	unsigned long asterisksLeft;
 	unsigned long asterisksRight;
 
@@ -126,14 +127,19 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo(console, &consoleInfo);
-	asterisksLeft = (consoleInfo.dwSize.X - (programName.length() + 2)) / 2;
-	asterisksRight = (consoleInfo.dwSize.X - (programName.length() + 2)) / 2
-		+ (consoleInfo.dwSize.X - (programName.length() + 2)) % 2;
+	width = consoleInfo.dwSize.X;
 #else
-	// TODO: Get terminal width under linux.
-	asterisksLeft = 30;
-	asterisksRight = 30;
+	winsize size;
+	// First argument of ioctl()  is an open file descriptor.
+	// Second argument is a device-dependent request code.
+	// The third argument is an untyped pointer to memory.
+	ioctl(0, TIOCGWINSZ, &size);
+	width = size.ws_col;
 #endif
+
+	asterisksLeft = (width - (programName.length() + 2)) / 2;
+	asterisksRight = (width - (programName.length() + 2)) / 2
+		+ (width - (programName.length() + 2)) % 2;
 
 	// Assembling caption.
 	std::string caption;

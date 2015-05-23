@@ -26,6 +26,9 @@
 	#include <termios.h>
 	// Used to manipulate file descriptor as in PrintText().
 	#include <fcntl.h>
+	// Used to manipulates the underlying device parameters of special files.
+	// Is used in PrepareTerminal() to retrieve the current size of the terminal.
+	#include <sys/ioctl.h>
 #endif
 
 // Enum representing a color.
