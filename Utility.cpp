@@ -233,88 +233,6 @@ void PrintText(std::string text, unsigned int pause)
 }
 
 
-// TODO Review function
-// Copies a directory to a new location.
-bool CopyDirectory(std::string sourcePath, std::string targetPath, bool copySubdirectories)
-{
-#ifdef _WIN32
-	int				errorCode = 0;
-	std::string		targetFilePath = "";
-	std::string		sourceFilePath = "";
-	std::string		searchPath = sourcePath + "/*";
-	HANDLE			hFind;
-	WIN32_FIND_DATA	findFileData;
-
-	std::cout << "Trying to copy files from '" << sourcePath << "' in '" << targetPath << "'." << std::endl;
-
-	// Creating directory.
-	if (!PathFileExists(targetPath.c_str()))
-	{
-		std::cout << "Directory '" << targetPath << "' does not exist." << std::endl;
-		errorCode = CreateDirectory(targetPath.c_str(), 0);
-		std::cout << "Created directory." << std::endl;
-		if (errorCode == 0)
-		{
-			std::cout << "Error." << std::endl;
-			return(false);
-		}
-	}
-
-	std::cout << "Copying files from '" << sourcePath << "' in '" << targetPath << "'." << std::endl;
-
-	// Finding and copiing files.
-	hFind = FindFirstFile(searchPath.c_str(), &findFileData);
-	FindNextFile(hFind, &findFileData);
-	while (FindNextFile(hFind, &findFileData))
-	{
-		std::cout << "Finding next File." << std::endl;
-		targetFilePath = targetPath + "\\" + findFileData.cFileName;
-		sourceFilePath = sourcePath + "\\" + findFileData.cFileName;
-		std::cout << "Copying files from '" << sourceFilePath << "' to '" << targetFilePath << "'." << std::endl;
-
-		// Copy directories and files.
-		if (findFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
-		{
-
-			if (copySubdirectories)
-			{
-				std::cout << "Copying directory." << std::endl;
-				CopyDirectory(sourceFilePath, targetFilePath, true);
-			}
-		}
-		else
-		{
-			std::cout << "Copying file." << std::endl;
-			CopyFile(sourceFilePath.c_str(), targetFilePath.c_str(), false);
-		}
-	}
-	FindClose(hFind);
-	std::cout << "Returning." << std::endl;
-	return(true);
-#else
-	// TODO Add Linux support.
-	return(false);
-#endif
-}
-
-//Copies the Files of one directory to another, without Subfolders
-//WIN32_FIND_DATA	FindFileData;
-//HANDLE			hFind;
-//string			SearchPath = SourcePath + "\\*";
-
-//CreateDirectory(TargetPath.c_str(), 0);
-//hFind=FindFirstFile(SearchPath.c_str(), &FindFileData);
-//FindNextFile(hFind, &FindFileData);
-//string NewFilePath;
-//string FilePath;
-//while(FindNextFile(hFind, &FindFileData)) {
-//NewFilePath = newpath + "\\" + FindFileData.cFileName;
-//FilePath = path + "\\" + FindFileData.cFileName;
-//CopyFile(FilePath.c_str(), NewFilePath.c_str(), false);
-//}
-//   FindClose(hFind);
-
-
 // Returns the number of words in a string.
 // respectInterpunctation defaults to true.
 int CountWords(std::string text)
@@ -347,7 +265,7 @@ int CountWords(std::string text)
 // Returns the path to the custom "Jeinzi" directory,
 // where all the application data is stored.
 // Empty string, when operation was unsuccessful.
-std::string GetAppDataDirectory()
+std::string GetJeinziDirectory()
 {
 	std::string path;
 
