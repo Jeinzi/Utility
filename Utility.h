@@ -88,6 +88,8 @@ void	ClearTerminal();
 void	SetTerminalTitle(std::string title);
 void	PrepareTerminal(std::string programName, std::string version, std::string description = "");
 void	PrintText(std::string text, unsigned int pause);
+bool	PathExists(std::string path);
+bool	CreateDirectory(std::string path);
 int		CountWords(std::string text);
 std::string	GetJeinziDirectory();
 std::string	ToLower(std::string text);

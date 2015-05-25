@@ -233,6 +233,84 @@ void PrintText(std::string text, unsigned int pause)
 }
 
 
+// Returns a boolean indicating if the specified path is a valid file or directory.
+bool PathExists(std::string path)
+{
+#ifdef _WIN32
+	return(PathFileExists(path.c_str()));
+#else
+
+#endif
+}
+
+// Creates a directory and its parent directories, if necessary.
+// Returns, if the directory has been created successfully.
+bool CreateDirectory(std::string path)
+{
+	// Instantly return true if the path already exists.
+	if (PathExists(path))
+	{
+		return(true);
+	}
+
+	// Replace backslashes by forward slashes.
+	for (unsigned int i = 0; i < path.length(); i++)
+	{
+		if (path[i] == '\\')
+		{
+			path[i] = '/';
+		}
+	}
+
+	// Get the path of the parent directory.
+	std::size_t lastSlash = path.rfind('/');
+	if (lastSlash == std::string::npos)
+	{
+		// If there is no parent directory, return if the the current directory exists.
+		return(PathExists(path));
+	}
+	else
+	{
+		// Create the parent directory.
+		// If it can not be created, return false.
+		std::string parentDirectory = path.substr(0, lastSlash);
+		if (!CreateDirectory(parentDirectory))
+		{
+			return(false);
+		}
+	}
+
+	// The parent directories now exist,
+	// so create the current directory in the OS specific way.
+#ifdef _WIN32
+	// Create a directory with default security descriptor.
+	unsigned long returnValue = CreateDirectory(path.c_str(), NULL);
+	if (returnValue == 0)
+	{
+		// Check errors.
+		unsigned long error = GetLastError();
+		if (error == ERROR_ALREADY_EXISTS)
+		{
+			return(true);
+		}
+		else if (error == ERROR_PATH_NOT_FOUND)
+		{
+			return(false);
+		}
+		else
+		{
+			return(false);
+		}
+	}
+
+	// If no error occured, return true.
+	return(true);
+#else
+
+#endif
+}
+
+
 // Returns the number of words in a string.
 // respectInterpunctation defaults to true.
 int CountWords(std::string text)
