@@ -1,6 +1,6 @@
 #include "Utility.h"
 
-// Changes the color in which the console text is beeing displayed.
+// Changes the color in which the console text is being displayed.
 void ChangeColor(Color color)
 {
 #ifdef _WIN32
@@ -11,6 +11,8 @@ void ChangeColor(Color color)
 	bool bright = false;
 	std::string escapeCode("\x1B[");
 
+	// If the color is a light version of an other color,
+	// map the light version to the normal version and add attribute "bright".
 	if (colorCode > 7)
 	{
 		colorCode -= 8;
@@ -21,10 +23,12 @@ void ChangeColor(Color color)
 
 	if (bright)
 	{
+		// Display brighter colors.
 		escapeCode += "\x1B[1m";
 	}
 	else
 	{
+		// Display darker colors.
 		escapeCode += "\x1B[2m";
 	}
 
@@ -98,7 +102,7 @@ void ClearTerminal()
 	// \x1B		Starting the escape sequence.
 	// [2J		Clears the entire screen.
 	// [1;1H	Sets the cursor to the top left corner.
-	std::cout << "\x1B[2J \x1B[1;1H";
+	std::cout << "\x1B[2J\x1B[1;1H";
 #endif
 }
 
@@ -192,7 +196,7 @@ void PrintText(std::string text, unsigned int pause)
 	fcntl(STDIN_FILENO, F_SETFL, oldFileDescriptor | O_NONBLOCK);
 #endif
 
-	// All OSs: Print characters of string one by one.
+	// All OSs: Print characters of the string one by one.
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		std::cout << text[i];
@@ -247,7 +251,7 @@ bool PathExists(std::string path)
 	bool pathExists;
 #ifdef _WIN32
 	// Converting the return value of PathFileExists()
-	// (which is an integer) to a boolean variable.
+	// (which is an integer) to a boolean value.
 	pathExists = (PathFileExists(path.c_str()) != 0);
 #else
 	// Although this is compiled as c++ code, the struct keyword is required
@@ -262,7 +266,7 @@ bool PathExists(std::string path)
 
 
 // Creates a directory and its parent directories, if necessary.
-// Returns, if the directory has been created successfully.
+// Returns a boolean value indicating if the directory has been created successfully.
 bool CreateDirectory(std::string path)
 {
 	// Instantly return true if the path already exists.
@@ -294,7 +298,7 @@ bool CreateDirectory(std::string path)
 	}
 
 	// The parent directories now exist,
-	// so create the current directory in the OS specific way.
+	// so let's create the current directory in the OS specific way.
 #ifdef _WIN32
 	// Create a directory with default security descriptor.
 	unsigned long returnValue = CreateDirectory(path.c_str(), NULL);
@@ -331,7 +335,6 @@ bool CreateDirectory(std::string path)
 
 
 // Returns the number of words in a string.
-// respectInterpunctation defaults to true.
 int CountWords(std::string text)
 {
 	bool	word = false;
@@ -361,7 +364,7 @@ int CountWords(std::string text)
 
 // Returns the path to the custom "Jeinzi" directory,
 // where all the application data is stored.
-// Empty string, when operation was unsuccessful.
+// Empty string, when the operation has been unsuccessful.
 std::string GetJeinziDirectory()
 {
 	std::string path;
@@ -451,14 +454,14 @@ std::string IntToHexString(int number)
 	bool positive = true;
 	int			remainder;
 	std::string	output;
-	// Remember sign and deal with positive number.
+	// Remember sign and henceforth deal with a positive number.
 	if (number < 0)
 	{
 		positive = false;
 		number = -number;
 	}
 
-	// Add remainder auf (number % 16) to string, then divide by 16.
+	// Add remainder (number % 16) to string, then divide by 16.
 	while (number > 0)
 	{
 		remainder = number % 16;
@@ -503,7 +506,7 @@ std::string IntToHexString(int number)
 }
 
 
-// Escapes a string for use in an URL (reserved characters are converted in a hex code).
+// Escapes a string for use in an URL (reserved characters are converted in hex escape sequence).
 std::string Escape(std::string text)
 {
 	std::string output = "";
@@ -585,7 +588,7 @@ std::string GetFileFormat(std::string path)
 	bool		foundDot = false;
 	std::string	format = "";
 
-	// Searches the string from last to first character.
+	// Searches through the string from the last to the first character.
 	for (int i = path.length() - 1; i >= 0; i--)
 	{
 		// If a dot has been found, all characters to the end of the string are copied.
