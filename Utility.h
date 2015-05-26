@@ -29,8 +29,13 @@
 	// Used to manipulates the underlying device parameters of special files.
 	// Is used in PrepareTerminal() to retrieve the current size of the terminal.
 	#include <sys/ioctl.h>
-	// Used to obtain information about files as in PathExists().
+	// Used to obtain information about files as in PathExists(),
+	// Also, mkdir() is in CreateDirectory().
 	#include <sys/stat.h>
+	// Defines the integer variable errno, which is set by system calls
+	// and some library functions in the event of an error.
+	// Used in CreateDirectory().
+	#include <errno.h>
 #endif
 
 // Enum representing a color.

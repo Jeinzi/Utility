@@ -282,12 +282,7 @@ bool CreateDirectory(std::string path)
 
 	// Get the path of the parent directory.
 	std::size_t lastSlash = path.rfind('/');
-	if (lastSlash == std::string::npos)
-	{
-		// If there is no parent directory, return if the the current directory exists.
-		return(PathExists(path));
-	}
-	else
+	if (lastSlash != std::string::npos)
 	{
 		// Create the parent directory.
 		// If it can not be created, return false.
@@ -307,25 +302,31 @@ bool CreateDirectory(std::string path)
 	{
 		// Check errors.
 		unsigned long error = GetLastError();
-		if (error == ERROR_ALREADY_EXISTS)
-		{
-			return(true);
-		}
-		else if (error == ERROR_PATH_NOT_FOUND)
-		{
-			return(false);
-		}
-		else
+		if (error != ERROR_ALREADY_EXISTS)
 		{
 			return(false);
 		}
 	}
+#else
+	// mkdir() can be found in stat.h.
+	// errno is defined in errno.h.
+	// Create a directory with standard file mode bits.
+	// S_IRWXU: 	Read, write, execute/search by owner.
+	// S_IRWXG:	Read, write, execute/search by group.
+	// S_IROTH:	Read permission, others.
+	// S_IXOTH:	Execute/search permission, others.
+	int returnValue = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	if(returnValue != 0)
+	{
+		if(errno != EEXIST)
+		{
+			return(false);
+		}
+	}
+#endif
 
 	// If no error occured, return true.
 	return(true);
-#else
-
-#endif
 }
 
 
