@@ -17,8 +17,16 @@ void ChangeColor(Color color)
 		bright = true;
 	}
 	escapeCode += std::to_string(30 + colorCode);
-	if (bright) escapeCode += ";1";
 	escapeCode += "m";
+
+	if (bright)
+	{
+		escapeCode += "\x1B[1m";
+	}
+	else
+	{
+		escapeCode += "\x1B[2m";
+	}
 
 	std::cout << escapeCode;
 #endif
