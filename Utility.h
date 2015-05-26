@@ -29,6 +29,8 @@
 	// Used to manipulates the underlying device parameters of special files.
 	// Is used in PrepareTerminal() to retrieve the current size of the terminal.
 	#include <sys/ioctl.h>
+	// Used to obtain information about files as in PathExists().
+	#include <sys/stat.h>
 #endif
 
 // Enum representing a color.

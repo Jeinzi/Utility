@@ -244,12 +244,22 @@ void PrintText(std::string text, unsigned int pause)
 // Returns a boolean indicating if the specified path is a valid file or directory.
 bool PathExists(std::string path)
 {
+	bool pathExists;
 #ifdef _WIN32
-	return(PathFileExists(path.c_str()));
+	// Converting the return value of PathFileExists()
+	// (which is an integer) to a boolean variable.
+	pathExists = (PathFileExists(path.c_str()) != 0);
 #else
-
+	// Although this is compiled as c++ code, the struct keyword is required
+	// because of the ambiguity of the structure stat and the function stat().
+	struct stat fileStats;
+	// Getting information about the file.
+	// If the operation has been successful, 0 is returned and the file thus exists.
+	pathExists = (stat(path.c_str(), &fileStats) == 0);
 #endif
+	return(pathExists);
 }
+
 
 // Creates a directory and its parent directories, if necessary.
 // Returns, if the directory has been created successfully.
