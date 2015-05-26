@@ -589,14 +589,14 @@ std::string GetFileFormat(std::string path)
 	// Searching the last occuring dot.
 	size_t dotPosition;
 	dotPosition = path.rfind('.');
-	
+
 	// If there is no dot, return an empty string.
 	if (dotPosition == std::string::npos)
 	{
 		return("");
 	}
 
-	// If there is a dot, return everthing thereafter.
+	// If there is a dot, return everything thereafter.
 	std::string format = path.substr(dotPosition + 1);
 	return(format);
 }
@@ -605,21 +605,19 @@ std::string GetFileFormat(std::string path)
 // Returns the filename from a path.
 std::string GetFileName(std::string path)
 {
-	bool		foundSlash = false;
-	std::string	name = "";
+	// Replace all backslashes by forward slashes.
+	std::replace(path.begin(), path.end(), '\\', '/');
 
-	// Searching through string backwards.
-	for (int i = path.length() - 1; i >= 0; i--)
+	// Search the last occurence of a slash.
+	size_t slashPosition = path.rfind('/');
+
+	if (slashPosition == std::string::npos)
 	{
-		// If some kind of slash has been found, the rest of the string will be copied.
-		if (path[i] == '/' || path[i] == '\\')
-		{
-			foundSlash = true;
-			name = path.substr(i + 1);
-			break;
-		}
+		// Return the path if no slash has been found.
+		return(path);
 	}
 
-	if (foundSlash) return(name);
-	else return(path);
+	// Otherwise return everything from the last slash to the end of the string.
+	std::string name = path.substr(slashPosition + 1);
+	return(name);
 }
