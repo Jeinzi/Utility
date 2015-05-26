@@ -103,7 +103,6 @@ std::string	ToLower(std::string text);
 std::string	FirstToUpper(std::string text);
 std::string	GetWord(std::string text, unsigned int index);
 std::string	IntToHexString(int number);
-std::string	ReverseString(std::string text);
 std::string	Escape(std::string text);
 std::string	GetComputerName();
 std::string	GetUserName();
