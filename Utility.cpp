@@ -582,28 +582,22 @@ std::string GetUserName()
 }
 
 
-// Returns the format of a specified file name.
+// Returns the format of a specified file name
+// or an empty string, if there is no format.
 std::string GetFileFormat(std::string path)
 {
-	bool		foundDot = false;
-	std::string	format = "";
-
-	// Searches through the string from the last to the first character.
-	for (int i = path.length() - 1; i >= 0; i--)
+	// Searching the last occuring dot.
+	size_t dotPosition;
+	dotPosition = path.rfind('.');
+	
+	// If there is no dot, return an empty string.
+	if (dotPosition == std::string::npos)
 	{
-		// If a dot has been found, all characters to the end of the string are copied.
-		if (path[i] == '.')
-		{
-			foundDot = true;
-			i++;
-			for (unsigned int j = i; j < path.length(); j++)
-			{
-				format += path[j];
-			}
-			break;
-		}
+		return("");
 	}
 
+	// If there is a dot, return everthing thereafter.
+	std::string format = path.substr(dotPosition + 1);
 	return(format);
 }
 
