@@ -61,7 +61,7 @@ enum class Color
 	White = 15,
 #else
 	// Linux: Values 0 - 7 matching ANSI escape codes.
-	// To get the bright variant, one has to use the same escape codes
+	// To get the dark variant, one has to use the same escape codes
 	// with an additional parameter.
 	Black = 0,
 	DarkRed = 1,
