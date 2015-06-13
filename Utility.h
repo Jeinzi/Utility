@@ -22,15 +22,15 @@
 	// Used to retrieve environment variables.
 	#include <stdlib.h>
 	// Contains the definitions used by the terminal I/O interfaces.
-	// Used in Wait() function.
+	// Used in Wait() function.o
 	#include <termios.h>
 	// Used to manipulate file descriptor as in PrintText().
 	#include <fcntl.h>
 	// Used to manipulates the underlying device parameters of special files.
 	// Is used in PrepareTerminal() to retrieve the current size of the terminal.
 	#include <sys/ioctl.h>
-	// Used to obtain information about files as in PathExists(),
-	// Also, mkdir() is in CreateDirectory().
+	// Used to obtain information about files as in PathExists().
+	// Also, mkdir() is used in CreateDirectory() and S_ISDIR() is used in IsFile().
 	#include <sys/stat.h>
 	// Defines the integer variable errno, which is set by system calls
 	// and some library functions in the event of an error.
@@ -97,6 +97,7 @@ void	PrepareTerminal(std::string programName, std::string version, std::string d
 void	PrintText(std::string text, unsigned int pause);
 bool	PathExists(std::string path);
 bool	CreateDirectory(std::string path);
+bool	IsFile(std::string path);
 int		CountWords(std::string text);
 std::string	GetJeinziDirectory();
 std::string	ToLower(std::string text);

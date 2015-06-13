@@ -334,6 +334,40 @@ bool CreateDirectory(std::string path)
 }
 
 
+// Returns true if the given path names a file, otherwise false.
+bool IsFile(std::string path)
+{
+	// Return false if the path does not exist.
+	if(!PathExists(path))
+	{
+		return(false);
+	}
+
+	bool isFile = true;
+	// Check file attributes (OS specific).
+#ifdef _WIN32
+	// Windows: Get attributes.
+	unsigned long fileAttributes;
+	fileAttributes = GetFileAttributes(path.c_str());
+	// If there was an error or the path specifies a directory,
+	// false shall be returned.
+	if(fileAttributes == INVALID_FILE_ATTRIBUTES
+		|| (fileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		isFile = false;
+	}
+#else
+	// Linux: Get information about the file/directory.
+	struct stat stats;
+	lstat(path.c_str(), &stats);
+	// Check for directory.
+	isFile = !S_ISDIR(stats.st_mode);
+#endif
+
+	return(isFile);
+}
+
+
 // Returns the number of words in a string.
 int CountWords(std::string text)
 {
