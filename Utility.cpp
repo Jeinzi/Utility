@@ -541,7 +541,7 @@ std::string IntToHexString(int number)
 
 
 // Escapes a string for use in an URL (reserved characters are converted in hex escape sequence).
-std::string Escape(std::string text)
+std::string EscapeURL(std::string text)
 {
 	std::string output = "";
 

@@ -104,7 +104,7 @@ std::string	ToLower(std::string text);
 std::string	FirstToUpper(std::string text);
 std::string	GetWord(std::string text, unsigned int index);
 std::string	IntToHexString(int number);
-std::string	Escape(std::string text);
+std::string	EscapeURL(std::string text);
 std::string	GetComputerName();
 std::string	GetUserName();
 std::string	GetFileFormat(std::string path);
