@@ -22,7 +22,7 @@
 	// Used to retrieve environment variables.
 	#include <stdlib.h>
 	// Contains the definitions used by the terminal I/O interfaces.
-	// Used in Wait() function.o
+	// Used in Wait() function.
 	#include <termios.h>
 	// Used to manipulate file descriptor as in PrintText().
 	#include <fcntl.h>
@@ -50,8 +50,8 @@ enum class Color
 	DarkRed = 4,
 	DarkMagenta = 5,
 	DarkYellow = 6,
-	LightGray = 7,
-	Gray = 8,
+	Gray = 7,
+	DarkGray = 8,
 	Blue = 9,
 	Green = 10,
 	Cyan = 11,
@@ -61,8 +61,8 @@ enum class Color
 	White = 15,
 #else
 	// Linux: Values 0 - 7 matching ANSI escape codes.
-	// To get the dark variant, one has to use the same escape codes
-	// with an additional parameter.
+	// To get the dark variant, the same escape codes
+	// are used with an additional parameter.
 	Black = 0,
 	DarkRed = 1,
 	DarkGreen = 2,
@@ -70,8 +70,8 @@ enum class Color
 	DarkBlue = 4,
 	DarkMagenta = 5,
 	DarkCyan = 6,
-	LightGray = 7,
-	Gray = 8,
+	Gray = 7,
+	DarkGray = 8,
 	Red = 9,
 	Green = 10,
 	Yellow = 11,
@@ -84,7 +84,7 @@ enum class Color
 	Info = DarkYellow,
 	Error = DarkRed,
 	Input = White,
-	Output = LightGray
+	Output = Gray
 };
 
 // Function prototypes.
@@ -104,7 +104,7 @@ std::string	ToLower(std::string text);
 std::string	FirstToUpper(std::string text);
 std::string	GetWord(std::string text, unsigned int index);
 std::string	IntToHexString(int number);
-std::string	Escape(std::string text);
+std::string	EscapeURL(std::string text);
 std::string	GetComputerName();
 std::string	GetUserName();
 std::string	GetFileFormat(std::string path);

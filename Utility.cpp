@@ -12,7 +12,7 @@ void ChangeColor(Color color)
 	std::string escapeCode("\x1B[");
 
 	// If the color is a light version of an other color,
-	// map the light version to the normal version and add attribute "bright".
+	// map the light version to the dark version and add attribute "bright".
 	if (colorCode > 7)
 	{
 		colorCode -= 8;
@@ -67,7 +67,7 @@ void Wait()
 
 	// Turning flags off.
 	// ECHO: displaying user input.
-	// ICANON: returning string on enter/EOF/EOL
+	// ICANON: returning string on enter/EOF/EOL.
 	newSettings.c_lflag &= ~(ICANON | ECHO );
 
 	// Setting parameters to terminal.
@@ -107,7 +107,7 @@ void ClearTerminal()
 }
 
 
-// Sets the title of the terminal
+// Sets the title of the terminal.
 void SetTerminalTitle(std::string title)
 {
 #ifdef _WIN32
@@ -142,7 +142,7 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	width = consoleInfo.dwSize.X;
 #else
 	winsize size;
-	// First argument of ioctl()  is an open file descriptor.
+	// First argument of ioctl() is an open file descriptor.
 	// Second argument is a device-dependent request code.
 	// The third argument is an untyped pointer to memory.
 	ioctl(0, TIOCGWINSZ, &size);
@@ -174,7 +174,7 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 // Pressing 'q' will print the rest of the string instantly.
 void PrintText(std::string text, unsigned int pause)
 {
-	// Need to change behaviour of terminal when using Linux
+	// The behaviour of the terminal needs to be changed when using linux
 	// in order to check if a key has been pressed
 	// while constantly printing characters.
 #ifdef __linux__
@@ -338,7 +338,7 @@ bool CreateDirectory(std::string path)
 bool IsFile(std::string path)
 {
 	// Return false if the path does not exist.
-	if(!PathExists(path))
+	if (!PathExists(path))
 	{
 		return(false);
 	}
@@ -351,7 +351,7 @@ bool IsFile(std::string path)
 	fileAttributes = GetFileAttributes(path.c_str());
 	// If there was an error or the path specifies a directory,
 	// false shall be returned.
-	if(fileAttributes == INVALID_FILE_ATTRIBUTES
+	if (fileAttributes == INVALID_FILE_ATTRIBUTES
 		|| (fileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
 		isFile = false;
@@ -541,7 +541,7 @@ std::string IntToHexString(int number)
 
 
 // Escapes a string for use in an URL (reserved characters are converted in hex escape sequence).
-std::string Escape(std::string text)
+std::string EscapeURL(std::string text)
 {
 	std::string output = "";
 
