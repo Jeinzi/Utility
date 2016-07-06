@@ -84,7 +84,8 @@ Returns the word at the given _index_ within the string. Pays attention to punct
 std::string GetWord(std::string text, unsigned int index);
 ```
 ---
-Converts an integer into a hex formatted string. I really couldn't find a method for that. Yeah, well, I guess I could have used C-style `printf()` if I really didn't want to write my own function.
+Converts an integer into a hex formatted string. I really couldn't find a method for that.
+...Yeah, well, I guess I could have used C-style `printf()` if I really didn't want to write my own function.
 ```C++
 std::string IntToHexString(int number);
 ```
