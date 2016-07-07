@@ -8,7 +8,7 @@ I also tried to keep the code cross-plattform, which means it should be compilab
 ```C++
 void ChangeColor(Color color);
 ```
-A word on terminals and colors: Using the windows command prompt, there is a set of color codes that can be set directly as either background or foreground. Other terminals can be manipulated using [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) in order to change color or text formatting - but the interpretation of these codes vary. This library defines `enum class Color` whose members can be used instead of plain color codes. If you need advanced control on your terminal and you want your software to work reliably on any system, take a look at one of the implementations of [curses](https://en.wikipedia.org/wiki/Curses_(programming_library)).
+A word on terminals and colors: Using the windows command prompt, there is a set of color codes that can be set directly as either background or foreground. Other terminals can be manipulated using [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) in order to change color or text formatting - but the interpretation of these codes varies. This library defines `enum class Color` whose members can be used instead of plain color codes. If you need advanced control on your terminal and you want your software to work reliably on any system, take a look at one of the implementations of [curses](https://en.wikipedia.org/wiki/Curses_(programming_library)).
 
 ---
 ```C++
