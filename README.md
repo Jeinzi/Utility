@@ -2,7 +2,7 @@
 #### Jabbering
 This project features a collection of functions I ended up needing in various C++ software projects. Many of them originate from the first larger project I wrote, which was a text adventure I may eventually upload too. Their functionality can of course also be found in other libraries, but I just don't want to include a massive overhead when I really only need one or two methods.
 
-I also tried to keep the code cross-plattform, which means it should be compilable on most Linux distributions. That being said, this is my first attempt trying to write C++- that runs on other OSs than Windows, so don't expect flawless, bug-free code. It took me quite a while to figure things out, but I guess it was kinda fun. Maybe someone else than me can make use of this or learn something along the way.
+I also tried to keep the code cross-plattform, which means it should be compilable on most Linux distributions. That being said, this is my first attempt trying to write C++ that runs on other OSs than Windows, so don't expect flawless, bug-free code. It took me quite a while to figure things out, but I guess it was kinda fun. Maybe someone else than me can make use of this or learn something along the way.
 
 #### Overview
 ```C++
