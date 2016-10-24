@@ -74,7 +74,7 @@ Counts the words within a string. Takes spaces and punctuation into account.
 ```C++
 std::string GetJeinziDirectory();
 ```
-This function returns the path to the directory where I like to save my own application data. That is, on windows _$AppData$/Roaming/Jeinzi/_ and on Linux _$home$/.Jeinzi_. Btw I could go ballistic if some software decides to save its data in my main user directory (windows) :angry:
+This function returns the path to the directory where I like to save my own application data. That is, on windows _$AppData$/Roaming/Jeinzi/_ and on Linux _$home$/.Jeinzi_. Btw I could go ballistic if some software decides to save its data in my main user directory on windows :angry:
 
 ---
 ```C++
@@ -109,7 +109,7 @@ Converts an integer into a hex formatted string. I really couldn't find a method
 ```C++
 std::string EscapeURL(std::string text);
 ```
-Escapes a string for use in an URL - reserved characters are converted in the corresponding hex escape sequence. Needed that when I was writing an image crawler for 4chan/wg using [cURL](https://github.com/curl/curl).
+Escapes a string for use in an URL - reserved characters are converted in the corresponding hex escape sequence. Needed that when I was writing an image crawler for [4chan/wg](https://www.4chan.org/wg) using [cURL](https://github.com/curl/curl).
 
 ---
 ```C++
