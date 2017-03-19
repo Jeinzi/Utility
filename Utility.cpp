@@ -12,7 +12,7 @@ void ChangeColor(Color color)
 	std::string escapeCode("\x1B[");
 
 	// If the color is a light version of an other color,
-	// map the light version to the normal version and add attribute "bright".
+	// map the light version to the dark version and add attribute "bright".
 	if (colorCode > 7)
 	{
 		colorCode -= 8;
@@ -67,7 +67,7 @@ void Wait()
 
 	// Turning flags off.
 	// ECHO: displaying user input.
-	// ICANON: returning string on enter/EOF/EOL
+	// ICANON: returning string on enter/EOF/EOL.
 	newSettings.c_lflag &= ~(ICANON | ECHO );
 
 	// Setting parameters to terminal.
@@ -107,7 +107,7 @@ void ClearTerminal()
 }
 
 
-// Sets the title of the terminal
+// Sets the title of the terminal.
 void SetTerminalTitle(std::string title)
 {
 #ifdef _WIN32
@@ -142,7 +142,7 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 	width = consoleInfo.dwSize.X;
 #else
 	winsize size;
-	// First argument of ioctl()  is an open file descriptor.
+	// First argument of ioctl() is an open file descriptor.
 	// Second argument is a device-dependent request code.
 	// The third argument is an untyped pointer to memory.
 	ioctl(0, TIOCGWINSZ, &size);
@@ -174,8 +174,8 @@ void PrepareTerminal(std::string programName, std::string version, std::string d
 // Pressing 'q' will print the rest of the string instantly.
 void PrintText(std::string text, unsigned int pause)
 {
-	// Need to change behaviour of terminal when using Linux
-	// in order to check if a key has been pressed
+	// The behaviour of the terminal needs to be changed when using Linux
+	// in order to check whether a key has been pressed
 	// while constantly printing characters.
 #ifdef __linux__
 	// Disable echo and waiting for user input.
@@ -200,7 +200,7 @@ void PrintText(std::string text, unsigned int pause)
 	for (unsigned int i = 0; i < text.length(); i++)
 	{
 		std::cout << text[i];
-		// Forcing to print everything in buffer instantly (needed for linux).
+		// Forcing to print everything in buffer instantly (needed for Linux).
 		fflush(stdout);
 		char chr;
 
@@ -235,7 +235,7 @@ void PrintText(std::string text, unsigned int pause)
 #endif
 	}
 
-	// Reset terminal to previous settings when running on linux.
+	// Reset terminal to previous settings when running on Linux.
 #ifdef __linux__
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldSettings);
 	fcntl(STDIN_FILENO, F_SETFL, oldFileDescriptor);
@@ -245,7 +245,7 @@ void PrintText(std::string text, unsigned int pause)
 }
 
 
-// Returns a boolean indicating if the specified path is a valid file or directory.
+// Returns a boolean indicating whether the specified path is a valid file or directory.
 bool PathExists(std::string path)
 {
 	bool pathExists;
@@ -266,7 +266,7 @@ bool PathExists(std::string path)
 
 
 // Creates a directory and its parent directories, if necessary.
-// Returns a boolean value indicating if the directory has been created successfully.
+// Returns a boolean value indicating whether the directory has been created successfully.
 bool CreateDirectory(std::string path)
 {
 	// Instantly return true if the path already exists.
@@ -329,7 +329,7 @@ bool CreateDirectory(std::string path)
 	}
 #endif
 
-	// If no error occured, return true.
+	// If no error occurred, return true.
 	return(true);
 }
 
@@ -338,7 +338,7 @@ bool CreateDirectory(std::string path)
 bool IsFile(std::string path)
 {
 	// Return false if the path does not exist.
-	if(!PathExists(path))
+	if (!PathExists(path))
 	{
 		return(false);
 	}
@@ -351,7 +351,7 @@ bool IsFile(std::string path)
 	fileAttributes = GetFileAttributes(path.c_str());
 	// If there was an error or the path specifies a directory,
 	// false shall be returned.
-	if(fileAttributes == INVALID_FILE_ATTRIBUTES
+	if (fileAttributes == INVALID_FILE_ATTRIBUTES
 		|| (fileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
 		isFile = false;
@@ -397,8 +397,8 @@ int CountWords(std::string text)
 
 
 // Returns the path to the custom "Jeinzi" directory,
-// where all the application data is stored.
-// Empty string, when the operation has been unsuccessful.
+// where all my application data is stored.
+// Empty string if the operation has been unsuccessful.
 std::string GetJeinziDirectory()
 {
 	std::string path;
@@ -458,8 +458,8 @@ std::string GetWord(std::string text, unsigned int index)
 	{
 		if (text[i] != ' ' && text[i] != ',' && text[i] != '.' && text[i] != '?' && text[i] != '!')
 		{
-			// If there is no space or punctation mark, there is a word.
-			// Following chars will be extracted until the next occurence of a non-word-character.
+			// If there is no space or punctuation mark, there is a word.
+			// Following chars will be extracted until the next occurrence of a non-word-character.
 			if (!word)
 			{
 				currentIndex++;
@@ -593,7 +593,7 @@ std::string GetComputerName()
 }
 
 
-// Returns the username. Empty string, if no name could be retrieved.
+// Returns the user name. Empty string, if no name could be retrieved.
 std::string GetUserName()
 {
 	std::string name;
@@ -620,7 +620,7 @@ std::string GetUserName()
 // or an empty string, if there is no format.
 std::string GetFileFormat(std::string path)
 {
-	// Searching the last occuring dot.
+	// Searching the last occurring dot.
 	size_t dotPosition;
 	dotPosition = path.rfind('.');
 
@@ -636,13 +636,13 @@ std::string GetFileFormat(std::string path)
 }
 
 
-// Returns the filename from a path.
+// Extracts the file name from a path.
 std::string GetFileName(std::string path)
 {
 	// Replace all backslashes by forward slashes.
 	std::replace(path.begin(), path.end(), '\\', '/');
 
-	// Search the last occurence of a slash.
+	// Search the last occurrence of a slash.
 	size_t slashPosition = path.rfind('/');
 
 	if (slashPosition == std::string::npos)
